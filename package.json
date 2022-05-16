@@ -2,7 +2,7 @@
     "name": "better-php-error-logger",
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
-    "version": "0.0.60",
+    "version": "0.0.61",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"

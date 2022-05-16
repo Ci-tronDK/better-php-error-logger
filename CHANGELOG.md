@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.061 16/5 2022 21.42 CEST
+- Uses <br> for new line instead of \n when useEchoInstead is set to true.
+
 Version 0.060 16/5 2022 20.07 CEST
 - Fixed so it uses replaceAll instead of 2 times replace. Changed print call stack to one line. Added setting to also var_dump variable. Added another setting to echo instead of error_log. Changed the default error logs. Changed description to say it the extension is customisable.
 
