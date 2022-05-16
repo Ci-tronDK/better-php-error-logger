@@ -36,7 +36,7 @@ function activate(context) {
 
                 if (configurations.useEchoInstead) {
                     errorLogString = `echo`;
-                    newLine = ` . "\\n"`;
+                    newLine = ` . "<br>"`;
                 }
 
                 if (configurations.varDumpVariable) {
