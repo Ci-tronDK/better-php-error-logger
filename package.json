@@ -1,0 +1,76 @@
+{
+    "name": "better-php-error-logger",
+    "displayName": "Better PHP Error Logger",
+    "description": "A PHP error logger with customisation options",
+    "version": "0.0.60",
+    "publisher": "martinvz",
+    "engines": {
+        "vscode": "^1.66.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.errorLog"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "extension.errorLog",
+                "title": "Error log"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.errorLog",
+                "key": "ctrl+alt+d",
+                "mac": "ctrl+alt+d"
+            }
+        ],
+        "configuration": {
+            "title": "Better PHP Error Logger",
+            "properties": {
+                "betterPhpErrorLogger.errorLogs": {
+                    "type": "array",
+                    "default": [
+                        "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+                        "'in ' . __FILE__ . ' on line ' . __LINE__"
+                    ],
+                    "description": "Write an array, each value will be error logged. Use ${selectedVar} for the selected variable"
+                },
+                "betterPhpErrorLogger.printCallStack": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Set this to true to also print call stack"
+                },
+                "betterPhpErrorLogger.varDumpVariable": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Set this to true to var_dump the selected variable"
+                },
+                "betterPhpErrorLogger.useEchoInstead": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Set this to true to use echo instead of error_log"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "lint": "eslint .",
+        "pretest": "npm run lint",
+        "test": "node ./test/runTest.js"
+    },
+    "devDependencies": {
+        "@types/vscode": "^1.66.0",
+        "@types/glob": "^7.2.0",
+        "@types/mocha": "^9.1.1",
+        "@types/node": "14.x",
+        "eslint": "^8.14.0",
+        "glob": "^8.0.1",
+        "mocha": "^9.2.2",
+        "typescript": "^4.6.4",
+        "@vscode/test-electron": "^2.1.3"
+    }
+}
