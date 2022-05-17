@@ -2,6 +2,7 @@
     "name": "better-php-error-logger",
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
+    "icon": "images/better-php-error-logger.png",
     "version": "0.0.61",
     "publisher": "martinvz",
     "engines": {
@@ -53,6 +54,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Set this to true to use echo instead of error_log"
+                },
+                "betterPhpErrorLogger.defaultVariableValue": {
+                    "type": "string",
+                    "default": "__CLASS__ . '::' . __FUNCTION__",
+                    "description": "Set this string to set the default selected variable value, which will be used if no variable is selected"
                 }
             }
         }

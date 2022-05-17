@@ -23,49 +23,61 @@ function activate(context) {
         }
 
         const selection = editor.selection;
-        const selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+        let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+
+
+
         const selectedLine = selection.active.line;
         const indentation = getIndentation(editor, document, selectedLine);
 
-        // Check if the selected variable is not empty
-        if (selectedVar.trim().length !== 0) {
-            editor.edit(editBuilder => {
 
-                let errorLogString = `error_log`;
-                let newLine = ``;
+        editor.edit(editBuilder => {
 
-                if (configurations.useEchoInstead) {
-                    errorLogString = `echo`;
-                    newLine = ` . "<br>"`;
-                }
+            // Check if the selected variable is empty, if so, get the default selected variable
+            if (selectedVar.trim().length === 0) {
+                let defaultVariableName = `$here`;
+                editBuilder.insert(
+                    new vscode.Position(selectedLine, 0),
+                    `${indentation}${defaultVariableName} = ${configurations.defaultVariableValue};\n`
+                );
+                selectedVar = `${defaultVariableName}`;
+            }
 
+            let errorLogString = `error_log`;
+            let newLine = ``;
+
+            if (configurations.useEchoInstead) {
+                errorLogString = `echo`;
+                newLine = ` . "<br>"`;
+            }
+
+            if (configurations.varDumpVariable) {
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + 1, 0),
+                    `${indentation}${errorLogString}("\\${selectedVar}"${newLine}); ob_start(); var_dump(${selectedVar});\n`
+                );
+            }
+            configurations.errorLogs.forEach(errorLog => {
+                errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
                 if (configurations.varDumpVariable) {
-                    editBuilder.insert(
-                        new vscode.Position(selectedLine + 1, 0),
-                        `${indentation}${errorLogString}("\\${selectedVar}"${newLine}); ob_start(); var_dump(${selectedVar});\n`
-                    );
-                }
-                configurations.errorLogs.forEach(errorLog => {
-                    errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
-                    if (configurations.varDumpVariable) {
-                        errorLog = errorLog.replaceAll(selectedVar, `ob_get_clean()`);
-                    }
-
-                    editBuilder.insert(
-                        new vscode.Position(selectedLine + 1, 0),
-                        `${indentation}${errorLogString}(${errorLog})${newLine};\n`
-                    );
-                });
-
-                if (configurations.printCallStack) {
-                    editBuilder.insert(
-                        new vscode.Position(selectedLine + 1, 0),
-                        `${indentation}${errorLogString}((new \\Exception())->getTraceAsString())${newLine};\n`
-                    );
+                    errorLog = errorLog.replaceAll(selectedVar, `ob_get_clean()`);
                 }
 
-            })
-        }
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + 1, 0),
+                    `${indentation}${errorLogString}(${errorLog}${newLine});\n`
+                );
+            });
+
+            if (configurations.printCallStack) {
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + 1, 0),
+                    `${indentation}${errorLogString}((new \\Exception())->getTraceAsString()${newLine});\n`
+                );
+            }
+
+        })
+
     });
 
     context.subscriptions.push(errorLog);
