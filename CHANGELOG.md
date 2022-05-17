@@ -2,7 +2,7 @@
 
 
 ## [Change Log]
-Version 0.065 17/5 2022 18.04 CEST
+Version 0.065 17/5 2022 18.44 CEST
 - Added repository to package.json and added a LICENSE.md file. Made so you can use error_log when no variable is selected, you can choose default value for the variable that will be created and logged. Moved <br> inside parentheses when echoing. Added an icon for the extension. Changed readme to reflect change and better formatting.
 
 Version 0.061 16/5 2022 21.42 CEST
