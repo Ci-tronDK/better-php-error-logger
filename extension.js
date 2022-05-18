@@ -35,10 +35,10 @@ function activate(context) {
 
             // Check if the selected variable is empty, if so, get the default selected variable
             if (selectedVar.trim().length === 0) {
-                let defaultVariableName = `$here`;
+                let defaultVariableName = configurations.defaultVariable.name;
                 editBuilder.insert(
                     new vscode.Position(selectedLine, 0),
-                    `${indentation}${defaultVariableName} = ${configurations.defaultVariableValue};\n`
+                    `${indentation}${defaultVariableName} = ${configurations.defaultVariable.value};`
                 );
                 selectedVar = `${defaultVariableName}`;
             }
@@ -52,15 +52,16 @@ function activate(context) {
             }
 
             if (configurations.varDumpVariable) {
+                selectedVarDump = `${selectedVar}_var_dump`;
                 editBuilder.insert(
                     new vscode.Position(selectedLine + 1, 0),
-                    `${indentation}${errorLogString}("\\${selectedVar}"${newLine}); ob_start(); var_dump(${selectedVar});\n`
+                    `${indentation}ob_start(); var_dump(${selectedVar});\n${selectedVarDump} = str_replace( array("\\r", "\\n"), '', trim(ob_get_clean()));\n`
                 );
             }
             configurations.errorLogs.forEach(errorLog => {
                 errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
                 if (configurations.varDumpVariable) {
-                    errorLog = errorLog.replaceAll(selectedVar, `ob_get_clean()`);
+                    errorLog = errorLog.replaceAll(selectedVar, `${selectedVarDump}`);
                 }
 
                 editBuilder.insert(

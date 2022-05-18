@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.65",
+    "version": "0.0.66",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -34,6 +34,10 @@
             "properties": {
                 "betterPhpErrorLogger.errorLogs": {
                     "type": "array",
+                    "items": {
+                        "type": "string",
+                        "description": "This will be error logged"
+                    },
                     "default": [
                         "'${selectedVar}: ' . print_r(${selectedVar}, true)",
                         "'in ' . __FILE__ . ' on line ' . __LINE__"
@@ -55,10 +59,24 @@
                     "default": false,
                     "description": "Set this to true to use echo instead of error_log"
                 },
-                "betterPhpErrorLogger.defaultVariableValue": {
-                    "type": "string",
-                    "default": "__CLASS__ . '::' . __FUNCTION__",
-                    "description": "Set this string to set the default selected variable value, which will be used if no variable is selected"
+                "betterPhpErrorLogger.defaultVariable": {
+                    "type": "object",
+                    "title": "Default variable",
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "Set the name of the variable, when no variable is selected"
+                        },
+                        "value": {
+                            "type": "string",
+                            "description": "Set the value of the variable, when no variable is selected"
+                        }
+                    },
+                    "default": {
+                        "name": "$here",
+                        "value": "__CLASS__ . '::' . __FUNCTION__"
+                    },
+                    "description": "Set name and value of the default variable, when no variable is selected"
                 }
             }
         }

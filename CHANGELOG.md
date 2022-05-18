@@ -2,11 +2,14 @@
 
 
 ## [Change Log]
-Version 0.065 17/5 2022 18.44 CEST
-- Added repository to package.json and added a LICENSE.md file. Made so you can use error_log when no variable is selected, you can choose default value for the variable that will be created and logged. Moved <br> inside parentheses when echoing. Added an icon for the extension. Changed readme to reflect change and better formatting.
+Version 0.066 18/5 2022 18.32 CEST
+- Added settings for default variable name, and changed setting for variable value to object instead of string. Made so it should be possible to change all settings in Settings UI. Made var_dump look better and uses a variable with variable name equal to variable + _var_dump and removes new lines from ob_get_clean(). Made so newlines work better in editor.
+
+Version 0.065 17/5 2022 18.45 CEST
+- Added repository to package.json and added a LICENSE.md file. Made so you can use error_log when no variable is selected, you can choose default value for the variable that will be created and logged. Moved \<br> inside parentheses when echoing. Added an icon for the extension. Changed readme to reflect change and better formatting.
 
 Version 0.061 16/5 2022 21.42 CEST
-- Uses <br> for new line instead of \n when useEchoInstead is set to true.
+- Uses \<br> for new line instead of \n when useEchoInstead is set to true.
 
 Version 0.060 16/5 2022 20.07 CEST
 - Fixed so it uses replaceAll instead of 2 times replace. Changed print call stack to one line. Added setting to also var_dump variable. Added another setting to echo instead of error_log. Changed the default error logs. Changed description to say that the extension is customisable.
