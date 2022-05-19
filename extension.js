@@ -55,7 +55,7 @@ function activate(context) {
                 selectedVarDump = `${selectedVar}_var_dump`;
                 editBuilder.insert(
                     new vscode.Position(selectedLine + 1, 0),
-                    `${indentation}ob_start(); var_dump(${selectedVar});\n${selectedVarDump} = str_replace( array("\\r", "\\n"), '', trim(ob_get_clean()));\n`
+                    `${indentation}ob_start(); var_dump(${selectedVar});\n${indentation}${selectedVarDump} = rtrim(ob_get_clean());\n`
                 );
             }
             configurations.errorLogs.forEach(errorLog => {

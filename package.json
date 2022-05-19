@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.66",
+    "version": "0.0.67",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -76,7 +76,8 @@
                         "name": "$here",
                         "value": "__CLASS__ . '::' . __FUNCTION__"
                     },
-                    "description": "Set name and value of the default variable, when no variable is selected"
+                    "description": "Set name and value of the default variable, when no variable is selected",
+                    "additionalProperties": false
                 }
             }
         }

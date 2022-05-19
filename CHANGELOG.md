@@ -2,7 +2,10 @@
 
 
 ## [Change Log]
-Version 0.066 18/5 2022 18.32 CEST
+Version 0.067 19/5 2022 17.35 CEST
+- Made so it should be possible to edit defaultVariable in Settings UI and not possible to add other properties to object. Made so it only removes last line when var_dumping. Made indentation better when var_dumping.
+
+Version 0.066 18/5 2022 18.33 CEST
 - Added settings for default variable name, and changed setting for variable value to object instead of string. Made so it should be possible to change all settings in Settings UI. Made var_dump look better and uses a variable with variable name equal to variable + _var_dump and removes new lines from ob_get_clean(). Made so newlines work better in editor.
 
 Version 0.065 17/5 2022 18.45 CEST
