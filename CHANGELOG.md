@@ -2,7 +2,10 @@
 
 
 ## [Change Log]
-Version 0.07 21/5 2022 12.14 CEST
+Version 0.071 21/5 2022 16.14 CEST
+- Made so it is possible to use keyboard shortcuts to print with call stack, var_dump Variable and use echo instead. Changed so variables that starts with $_ uses $__ instead, so it works with special chars. Updated readme to reflect change.
+
+Version 0.070 21/5 2022 12.14 CEST
 - Made so when so it works when var_dumping is used on functions. It creates variable based on function name and replaces e.g. parentheses wih special characters, whcih user can change if it doesn't work for them (e.g. if the characters isn't supported). In the varable name I have added a special space character befor var_dump. This is also user changeable. Updated README.md to reflect change.
 
 Version 0.067 19/5 2022 17.35 CEST

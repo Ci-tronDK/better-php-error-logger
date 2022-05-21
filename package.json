@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.70",
+    "version": "0.0.71",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -27,6 +27,24 @@
                 "command": "extension.errorLog",
                 "key": "ctrl+alt+d",
                 "mac": "ctrl+alt+d"
+            },
+            {
+                "command": "extension.errorLog",
+                "key": "ctrl+alt+shift+d",
+                "mac": "ctrl+alt+shift+d",
+                "args": "printWithCallStack"
+            },
+            {
+                "command": "extension.errorLog",
+                "key": "ctrl+alt+shift+e",
+                "mac": "ctrl+alt+shift+e",
+                "args": "varDumpVariable"
+            },
+            {
+                "command": "extension.errorLog",
+                "key": "ctrl+alt+shift+f",
+                "mac": "ctrl+alt+shift+f",
+                "args": "useEchoInstead"
             }
         ],
         "configuration": {

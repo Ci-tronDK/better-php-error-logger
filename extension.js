@@ -9,8 +9,8 @@ const vscode = require('vscode');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    const errorLog = vscode.commands.registerCommand("extension.errorLog", () => {
-        const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
+    const errorLog = vscode.commands.registerCommand("extension.errorLog", (args) => {
+
 
         const editor = vscode.window.activeTextEditor;
         if (!editor) {
@@ -22,10 +22,10 @@ function activate(context) {
             return;
         }
 
+        const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
+
         const selection = editor.selection;
         let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
-
-
 
         const selectedLine = selection.active.line;
         const indentation = getIndentation(editor, document, selectedLine);
@@ -46,17 +46,21 @@ function activate(context) {
             let errorLogString = `error_log`;
             let newLine = ``;
 
-            if (configurations.useEchoInstead) {
+            if (configurations.useEchoInstead || args == `useEchoInstead`) {
                 errorLogString = `echo`;
                 newLine = ` . "<br>"`;
             }
 
-            if (configurations.varDumpVariable) {
+            if (configurations.varDumpVariable || args == `varDumpVariable`) {
 
                 selectedVarDump = selectedVar;
 
                 if (!selectedVarDump.startsWith('$')) {
                     selectedVarDump = `$${selectedVarDump}`;
+                }
+
+                if (selectedVarDump.startsWith('$_')) {
+                    selectedVarDump = selectedVarDump.replace('$_', '$__');
                 }
 
                 const { ['Space before var_dump']: spaceBeforeVarDump, ...objectWithoutSpaceBeforeVarDump } = configurations.varDumpSpecialChars
@@ -83,7 +87,7 @@ function activate(context) {
                 );
             });
 
-            if (configurations.printCallStack) {
+            if (configurations.printCallStack || args == `printWithCallStack`) {
                 editBuilder.insert(
                     new vscode.Position(selectedLine + 1, 0),
                     `${indentation}${errorLogString}((new \\Exception())->getTraceAsString()${newLine});\n`
