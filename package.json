@@ -65,11 +65,13 @@
                     "properties": {
                         "name": {
                             "type": "string",
-                            "description": "Set the name of the variable, when no variable is selected"
+                            "description": "Set the name of the variable, when no variable is selected",
+                            "default": "$here"
                         },
                         "value": {
                             "type": "string",
-                            "description": "Set the value of the variable, when no variable is selected"
+                            "description": "Set the value of the variable, when no variable is selected",
+                            "default": "__CLASS__ . '::' . __FUNCTION__"
                         }
                     },
                     "default": {
@@ -77,6 +79,64 @@
                         "value": "__CLASS__ . '::' . __FUNCTION__"
                     },
                     "description": "Set name and value of the default variable, when no variable is selected",
+                    "additionalProperties": false
+                },
+                "betterPhpErrorLogger.varDumpSpecialChars": {
+                    "type": "object",
+                    "title": "Special characters to use for variable when var dumping",
+                    "properties": {
+                        "Space before var_dump": {
+                            "type": "string",
+                            "description": "Set the special character to use before var_dump in the variable",
+                            "default": " "
+                        },
+                        "->": {
+                            "type": "string",
+                            "description": "Set the special character to use for ->",
+                            "default": "➜"
+                        },
+                        "(": {
+                            "type": "string",
+                            "description": "Set the special character to use for (",
+                            "default": "⟮"
+                        },
+                        ")": {
+                            "type": "string",
+                            "description": "Set the special character to use for )",
+                            "default": "⟯"
+                        },
+                        "[": {
+                            "type": "string",
+                            "description": "Set the special character to use for [",
+                            "default": "⦋"
+                        },
+                        "]": {
+                            "type": "string",
+                            "description": "Set the special character to use for ]",
+                            "default": "⦌"
+                        },
+                        "'": {
+                            "type": "string",
+                            "description": "Set the special character to use for '",
+                            "default": ""
+                        },
+                        "\"": {
+                            "type": "string",
+                            "description": "Set the special character to use for \"",
+                            "default": ""
+                        }
+                    },
+                    "default": {
+                        "Space before var_dump": " ",
+                        "->": "➜",
+                        "(": "⟮",
+                        ")": "⟯",
+                        "[": "⦋",
+                        "]": "⦌",
+                        "'": "",
+                        "\"": ""
+                    },
+                    "description": "Set the special characters to use for variable when var dumping if default is not supported",
                     "additionalProperties": false
                 }
             }

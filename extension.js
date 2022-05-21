@@ -52,7 +52,20 @@ function activate(context) {
             }
 
             if (configurations.varDumpVariable) {
-                selectedVarDump = `${selectedVar}_var_dump`;
+
+                selectedVarDump = selectedVar;
+
+                if (!selectedVarDump.startsWith('$')) {
+                    selectedVarDump = `$${selectedVarDump}`;
+                }
+
+                const { ['Space before var_dump']: spaceBeforeVarDump, ...objectWithoutSpaceBeforeVarDump } = configurations.varDumpSpecialChars
+                const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDump);
+                const replaceWith = Object.values(objectWithoutSpaceBeforeVarDump);
+
+                toBeReplaced.forEach((tag, i) => selectedVarDump = selectedVarDump.replace(new RegExp("\\" + tag, "g"), replaceWith[i]))
+
+                selectedVarDump = `${selectedVarDump}${spaceBeforeVarDump}var_dump`;
                 editBuilder.insert(
                     new vscode.Position(selectedLine + 1, 0),
                     `${indentation}ob_start(); var_dump(${selectedVar});\n${indentation}${selectedVarDump} = rtrim(ob_get_clean());\n`
