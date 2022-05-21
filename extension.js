@@ -10,95 +10,110 @@ const vscode = require('vscode');
  */
 function activate(context) {
     const errorLog = vscode.commands.registerCommand("extension.errorLog", (args) => {
+        runTheFunctionBasedOnShortcut(args);
+    });
 
+    const callStack = vscode.commands.registerCommand("extension.callStack", (args) => {
+        runTheFunctionBasedOnShortcut(args);
+    });
 
-        const editor = vscode.window.activeTextEditor;
-        if (!editor) {
-            return;
-        }
+    const varDumpVariable = vscode.commands.registerCommand("extension.varDumpVariable", (args) => {
+        runTheFunctionBasedOnShortcut(args);
+    });
 
-        const document = editor.document;
-        if (document.languageId !== "php") {
-            return;
-        }
-
-        const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
-
-        const selection = editor.selection;
-        let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
-
-        const selectedLine = selection.active.line;
-        const indentation = getIndentation(editor, document, selectedLine);
-
-
-        editor.edit(editBuilder => {
-
-            // Check if the selected variable is empty, if so, get the default selected variable
-            if (selectedVar.trim().length === 0) {
-                let defaultVariableName = configurations.defaultVariable.name;
-                editBuilder.insert(
-                    new vscode.Position(selectedLine, 0),
-                    `${indentation}${defaultVariableName} = ${configurations.defaultVariable.value};`
-                );
-                selectedVar = `${defaultVariableName}`;
-            }
-
-            let errorLogString = `error_log`;
-            let newLine = ``;
-
-            if (configurations.useEchoInstead || args == `useEchoInstead`) {
-                errorLogString = `echo`;
-                newLine = ` . "<br>"`;
-            }
-
-            if (configurations.varDumpVariable || args == `varDumpVariable`) {
-
-                selectedVarDump = selectedVar;
-
-                if (!selectedVarDump.startsWith('$')) {
-                    selectedVarDump = `$${selectedVarDump}`;
-                }
-
-                if (selectedVarDump.startsWith('$_')) {
-                    selectedVarDump = selectedVarDump.replace('$_', '$__');
-                }
-
-                const { ['Space before var_dump']: spaceBeforeVarDump, ...objectWithoutSpaceBeforeVarDump } = configurations.varDumpSpecialChars
-                const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDump);
-                const replaceWith = Object.values(objectWithoutSpaceBeforeVarDump);
-
-                toBeReplaced.forEach((tag, i) => selectedVarDump = selectedVarDump.replace(new RegExp("\\" + tag, "g"), replaceWith[i]))
-
-                selectedVarDump = `${selectedVarDump}${spaceBeforeVarDump}var_dump`;
-                editBuilder.insert(
-                    new vscode.Position(selectedLine + 1, 0),
-                    `${indentation}ob_start(); var_dump(${selectedVar});\n${indentation}${selectedVarDump} = rtrim(ob_get_clean());\n`
-                );
-            }
-            configurations.errorLogs.forEach(errorLog => {
-                errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
-                if (configurations.varDumpVariable) {
-                    errorLog = errorLog.replaceAll(selectedVar, `${selectedVarDump}`);
-                }
-
-                editBuilder.insert(
-                    new vscode.Position(selectedLine + 1, 0),
-                    `${indentation}${errorLogString}(${errorLog}${newLine});\n`
-                );
-            });
-
-            if (configurations.printCallStack || args == `printWithCallStack`) {
-                editBuilder.insert(
-                    new vscode.Position(selectedLine + 1, 0),
-                    `${indentation}${errorLogString}((new \\Exception())->getTraceAsString()${newLine});\n`
-                );
-            }
-
-        })
-
+    const useEchoInstead = vscode.commands.registerCommand("extension.useEchoInstead", (args) => {
+        runTheFunctionBasedOnShortcut(args);
     });
 
     context.subscriptions.push(errorLog);
+    context.subscriptions.push(callStack);
+    context.subscriptions.push(varDumpVariable);
+    context.subscriptions.push(useEchoInstead);
+}
+
+function runTheFunctionBasedOnShortcut(args) {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        return;
+    }
+
+    const document = editor.document;
+    if (document.languageId !== "php") {
+        return;
+    }
+
+    const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
+
+    const selection = editor.selection;
+    let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+
+    const selectedLine = selection.active.line;
+    const indentation = getIndentation(editor, document, selectedLine);
+
+    editor.edit(editBuilder => {
+
+        // Check if the selected variable is empty, if so, get the default selected variable
+        if (selectedVar.trim().length === 0) {
+            let defaultVariableName = configurations.defaultVariable.name;
+            editBuilder.insert(
+                new vscode.Position(selectedLine, 0),
+                `${indentation}${defaultVariableName} = ${configurations.defaultVariable.value};`
+            );
+            selectedVar = `${defaultVariableName}`;
+        }
+
+        let errorLogString = `error_log`;
+        let newLine = ``;
+
+        if (configurations.useEchoInstead || args == `useEchoInstead`) {
+            errorLogString = `echo`;
+            newLine = ` . "<br>"`;
+        }
+
+        if (configurations.varDumpVariable || args == `varDumpVariable`) {
+
+            selectedVarDump = selectedVar;
+
+            if (!selectedVarDump.startsWith('$')) {
+                selectedVarDump = `$${selectedVarDump}`;
+            }
+
+            if (selectedVarDump.startsWith('$_')) {
+                selectedVarDump = selectedVarDump.replace('$_', '$__');
+            }
+
+            const { ['Space before var_dump']: spaceBeforeVarDump, ...objectWithoutSpaceBeforeVarDump } = configurations.varDumpSpecialChars
+            const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDump);
+            const replaceWith = Object.values(objectWithoutSpaceBeforeVarDump);
+
+            toBeReplaced.forEach((tag, i) => selectedVarDump = selectedVarDump.replace(new RegExp("\\" + tag, "g"), replaceWith[i]))
+
+            selectedVarDump = `${selectedVarDump}${spaceBeforeVarDump}var_dump`;
+            editBuilder.insert(
+                new vscode.Position(selectedLine + 1, 0),
+                `${indentation}ob_start(); var_dump(${selectedVar});\n${indentation}${selectedVarDump} = rtrim(ob_get_clean());\n`
+            );
+        }
+        configurations.errorLogs.forEach(errorLog => {
+            errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
+            if (configurations.varDumpVariable) {
+                errorLog = errorLog.replaceAll(selectedVar, `${selectedVarDump}`);
+            }
+
+            editBuilder.insert(
+                new vscode.Position(selectedLine + 1, 0),
+                `${indentation}${errorLogString}(${errorLog}${newLine});\n`
+            );
+        });
+
+        if (configurations.printCallStack || args == `printWithCallStack`) {
+            editBuilder.insert(
+                new vscode.Position(selectedLine + 1, 0),
+                `${indentation}${errorLogString}((new \\Exception())->getTraceAsString()${newLine});\n`
+            );
+        }
+
+    })
 }
 
 function getIndentation(editor, document, selectedLine) {

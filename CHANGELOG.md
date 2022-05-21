@@ -2,7 +2,10 @@
 
 
 ## [Change Log]
-Version 0.071 21/5 2022 16.14 CEST
+Version 0.072 21/5 2022 19.02 CEST
+- Made something so keyboard shortcuts should have different names in shortcut settings.
+
+Version 0.071 21/5 2022 16.32 CEST
 - Made so it is possible to use keyboard shortcuts to print with call stack, var_dump Variable and use echo instead. Changed so variables that starts with $_ uses $__ instead, so it works with special chars. Updated readme to reflect change.
 
 Version 0.070 21/5 2022 12.14 CEST
