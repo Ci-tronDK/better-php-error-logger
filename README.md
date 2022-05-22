@@ -29,9 +29,9 @@ Change betterPhpErrorLogger.defaultVariable to set which variable name and value
                         "name": "$here",  
                         "value": "__CLASS__ . '::' . __FUNCTION__"  
                     }  
-If you are var_dumping e.g. functions then a variable will be created based on the function where characters like parentheses will be replaced by special characters.  
-This is user changeable (e.g. if characters isn't supported). Space before var_dump in the variable will be replaced by a special space. This is also userr changeable.  
-Use betterPhpErrorLogger.varDumpSpecialChars for this.  
+If you are var_dumping e.g. functions then a variable will be created with a name based on the function where characters like parentheses will be replaced by special characters.  
+This is user changeable (e.g. if characters isn't supported). Space before var_dump in the variable will be replaced by a special space. This is also user changeable.  
+Use betterPhpErrorLogger.varDumpSpecialChars for this. 
 The default values are:  
                     {  
                         "Space before var_dump": " ",  

@@ -9,19 +9,35 @@ const vscode = require('vscode');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-    const errorLog = vscode.commands.registerCommand("extension.errorLog", (args) => {
+    const errorLog = vscode.commands.registerCommand("extension.betterPhpErrorLogger", (args) => {
+        if (args === undefined) {
+            args = "";
+        }
+
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const callStack = vscode.commands.registerCommand("extension.callStack", (args) => {
+    const callStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.callStack", (args) => {
+        if (args === undefined) {
+            args = "printWithCallStack";
+        }
+
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const varDumpVariable = vscode.commands.registerCommand("extension.varDumpVariable", (args) => {
+    const varDumpVariable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.varDumpVariable", (args) => {
+        if (args === undefined) {
+            args = "varDumpVariable";
+        }
+
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const useEchoInstead = vscode.commands.registerCommand("extension.useEchoInstead", (args) => {
+    const useEchoInstead = vscode.commands.registerCommand("extension.betterPhpErrorLogger.useEchoInstead", (args) => {
+        if (args === undefined) {
+            args = "useEchoInstead";
+        }
+
         runTheFunctionBasedOnShortcut(args);
     });
 
@@ -46,6 +62,17 @@ function runTheFunctionBasedOnShortcut(args) {
 
     const selection = editor.selection;
     let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+
+    //Check if the braces in the selected variable are balanced
+    if (!isBalanced(selectedVar)) {
+        vscode.window.showErrorMessage(`Braces in the selected value are not balanced`);
+        return;
+    }
+    //Check if the selected variable not includes ;
+    if (selectedVar.includes(';')) {
+        vscode.window.showErrorMessage(`The selected value can not include ;`);
+        return;
+    }
 
     const selectedLine = selection.active.line;
     const indentation = getIndentation(editor, document, selectedLine);
@@ -114,6 +141,31 @@ function runTheFunctionBasedOnShortcut(args) {
         }
 
     })
+}
+
+//Check if string braces are balanced
+function isBalanced(string) {
+    let stack = [];
+    let openBraces = ["(", "[", "{"];
+    let closeBraces = [")", "]", "}"];
+    let braceMap = {
+        "(": ")",
+        "[": "]",
+        "{": "}"
+    };
+
+    for (let i = 0; i < string.length; i++) {
+        let char = string[i];
+        if (openBraces.includes(char)) {
+            stack.push(char);
+        } else if (closeBraces.includes(char)) {
+            let last = stack.pop();
+            if (braceMap[last] !== char) {
+                return false;
+            }
+        }
+    }
+    return stack.length === 0;
 }
 
 function getIndentation(editor, document, selectedLine) {

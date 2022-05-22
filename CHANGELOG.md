@@ -2,6 +2,10 @@
 
 
 ## [Change Log]
+Version 0.073 22/5 2022 14.04 CEST
+- Made so commands also works in command palette. Added keywords in package.json.  Changed command names, so it should be easier to find all shortcuts for the extension. 
+Added check to see if braces are balanced when selected text and check to see if selection contains ;. Error messages will be shown. Changed LICENSE.md to MIT license. Small changes in README.md.
+
 Version 0.072 21/5 2022 19.02 CEST
 - Made something so keyboard shortcuts should have different names in shortcut settings.
 
