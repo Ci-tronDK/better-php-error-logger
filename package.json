@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.73",
+    "version": "0.0.74",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -177,6 +177,11 @@
                             "type": "string",
                             "description": "Set the special character to use for \"",
                             "default": ""
+                        },
+                        "$": {
+                            "type": "string",
+                            "description": "Set the special character to use for $",
+                            "default": "＄"
                         }
                     },
                     "default": {
@@ -187,7 +192,8 @@
                         "[": "⦋",
                         "]": "⦌",
                         "'": "",
-                        "\"": ""
+                        "\"": "",
+                        "$": "＄"
                     },
                     "description": "Set the special characters to use for variable when var dumping if default is not supported",
                     "additionalProperties": false

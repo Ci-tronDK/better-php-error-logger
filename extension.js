@@ -79,14 +79,28 @@ function runTheFunctionBasedOnShortcut(args) {
 
     editor.edit(editBuilder => {
 
+        let newLineIfOnLastLine = ``;
+        //If selection is on last line, add new line
+        if (selection.start.line === document.lineCount - 1) {
+            editBuilder.insert(new vscode.Position(document.lineCount), '\n');
+            newLineIfOnLastLine = '\n';
+        }
+
         // Check if the selected variable is empty, if so, get the default selected variable
         if (selectedVar.trim().length === 0) {
-            let defaultVariableName = configurations.defaultVariable.name;
+            const defaultVariableName = configurations.defaultVariable.name;
+            const defaultVariableValue = configurations.defaultVariable.value;
+            let position = 0;
+            //If selected line contains text
+            if (document.lineAt(selectedLine).text.trim().length !== 0) {
+                position = 1;
+            }
+
             editBuilder.insert(
-                new vscode.Position(selectedLine, 0),
-                `${indentation}${defaultVariableName} = ${configurations.defaultVariable.value};`
+                new vscode.Position(selectedLine + position),
+                `${indentation}${defaultVariableName} = ${defaultVariableValue};${newLineIfOnLastLine}`
             );
-            selectedVar = `${defaultVariableName}`;
+            selectedVar = defaultVariableName;
         }
 
         let errorLogString = `error_log`;
@@ -109,9 +123,18 @@ function runTheFunctionBasedOnShortcut(args) {
                 selectedVarDump = selectedVarDump.replace('$_', '$__');
             }
 
-            const { ['Space before var_dump']: spaceBeforeVarDump, ...objectWithoutSpaceBeforeVarDump } = configurations.varDumpSpecialChars
-            const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDump);
-            const replaceWith = Object.values(objectWithoutSpaceBeforeVarDump);
+            const {
+                ['Space before var_dump']: spaceBeforeVarDump,
+                ['$']: dollarSign,
+                ...objectWithoutSpaceBeforeVarDumpAndDollarSign
+            }
+                = configurations.varDumpSpecialChars;
+
+            //Replace all occurences of $ with i except first occurence
+            selectedVarDump = selectedVarDump.slice(0, 1) + selectedVarDump.slice(1).replaceAll('$', dollarSign)
+
+            const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDumpAndDollarSign);
+            const replaceWith = Object.values(objectWithoutSpaceBeforeVarDumpAndDollarSign);
 
             toBeReplaced.forEach((tag, i) => selectedVarDump = selectedVarDump.replace(new RegExp("\\" + tag, "g"), replaceWith[i]))
 
@@ -123,8 +146,8 @@ function runTheFunctionBasedOnShortcut(args) {
         }
         configurations.errorLogs.forEach(errorLog => {
             errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
-            if (configurations.varDumpVariable) {
-                errorLog = errorLog.replaceAll(selectedVar, `${selectedVarDump}`);
+            if (configurations.varDumpVariable || args == `varDumpVariable`) {
+                errorLog = errorLog.replaceAll(selectedVar, selectedVarDump);
             }
 
             editBuilder.insert(

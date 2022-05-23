@@ -23,5 +23,5 @@ SOFTWARE.
 
 The icon for this extension uses the PHP logo in its design.
 It was created by the author Colin Viebrock.   
-PHP logo: https://www.php.net/download-logos.php.
+PHP logo: https://www.php.net/download-logos.php.  
 License:  https://creativecommons.org/licenses/by-sa/4.0/

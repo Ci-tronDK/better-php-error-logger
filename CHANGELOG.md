@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.074 23/5 2022 19.57 CEST
+- Made so a new line is added when selection is on last line, so it works better. Made so var_dump works correctly when using keyboard shortcuts. If the selected line contains text, things will be inserted on the line under. Made so it works with multiple dollarsigns and users can change value to be uses instead when var_dumping.
+
 Version 0.073 22/5 2022 14.04 CEST
 - Made so commands also works in command palette. Added keywords in package.json.  Changed command names, so it should be easier to find all shortcuts for the extension. 
 Added check to see if braces are balanced when selected text and check to see if selection contains ;. Error messages will be shown. Changed LICENSE.md to MIT license. Small changes in README.md.
