@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.74",
+    "version": "0.0.75",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -32,7 +32,7 @@
     ],
     "activationEvents": [
         "onCommand:extension.betterPhpErrorLogger",
-        "onCommand:extension.betterPhpErrorLogger.callStack",
+        "onCommand:extension.betterPhpErrorLogger.printWithCallStack",
         "onCommand:extension.betterPhpErrorLogger.varDumpVariable",
         "onCommand:extension.betterPhpErrorLogger.useEchoInstead"
     ],
@@ -44,7 +44,7 @@
                 "title": "Error log"
             },
             {
-                "command": "extension.betterPhpErrorLogger.callStack",
+                "command": "extension.betterPhpErrorLogger.printWithCallStack",
                 "title": "Call stack"
             },
             {
@@ -64,7 +64,7 @@
                 "args": ""
             },
             {
-                "command": "extension.betterPhpErrorLogger.callStack",
+                "command": "extension.betterPhpErrorLogger.printWithCallStack",
                 "key": "ctrl+alt+shift+d",
                 "mac": "ctrl+alt+shift+d",
                 "args": "printWithCallStack"
@@ -132,70 +132,6 @@
                         "value": "__CLASS__ . '::' . __FUNCTION__"
                     },
                     "description": "Set name and value of the default variable, when no variable is selected",
-                    "additionalProperties": false
-                },
-                "betterPhpErrorLogger.varDumpSpecialChars": {
-                    "type": "object",
-                    "title": "Special characters to use for variable when var dumping",
-                    "properties": {
-                        "Space before var_dump": {
-                            "type": "string",
-                            "description": "Set the special character to use before var_dump in the variable",
-                            "default": " "
-                        },
-                        "->": {
-                            "type": "string",
-                            "description": "Set the special character to use for ->",
-                            "default": "➜"
-                        },
-                        "(": {
-                            "type": "string",
-                            "description": "Set the special character to use for (",
-                            "default": "⟮"
-                        },
-                        ")": {
-                            "type": "string",
-                            "description": "Set the special character to use for )",
-                            "default": "⟯"
-                        },
-                        "[": {
-                            "type": "string",
-                            "description": "Set the special character to use for [",
-                            "default": "⦋"
-                        },
-                        "]": {
-                            "type": "string",
-                            "description": "Set the special character to use for ]",
-                            "default": "⦌"
-                        },
-                        "'": {
-                            "type": "string",
-                            "description": "Set the special character to use for '",
-                            "default": ""
-                        },
-                        "\"": {
-                            "type": "string",
-                            "description": "Set the special character to use for \"",
-                            "default": ""
-                        },
-                        "$": {
-                            "type": "string",
-                            "description": "Set the special character to use for $",
-                            "default": "＄"
-                        }
-                    },
-                    "default": {
-                        "Space before var_dump": " ",
-                        "->": "➜",
-                        "(": "⟮",
-                        ")": "⟯",
-                        "[": "⦋",
-                        "]": "⦌",
-                        "'": "",
-                        "\"": "",
-                        "$": "＄"
-                    },
-                    "description": "Set the special characters to use for variable when var dumping if default is not supported",
                     "additionalProperties": false
                 }
             }

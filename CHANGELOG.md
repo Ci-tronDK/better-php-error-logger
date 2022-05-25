@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.075 25/5 2022 19.57 CEST
+- Changed how var_dumping works, so there are nothing with special characters. It uses a temporary variable to store the old variable. Changed how it checks for settings/keyboard shortcuts. Removed all settings with special chars. Changed command name from callStack to printWithCallStack.
+
 Version 0.074 23/5 2022 19.57 CEST
 - Made so a new line is added when selection is on last line, so it works better. Made so var_dump works correctly when using keyboard shortcuts. If the selected line contains text, things will be inserted on the line under. Made so it works with multiple dollarsigns and users can change value to be uses instead when var_dumping.
 

@@ -17,7 +17,7 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const callStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.callStack", (args) => {
+    const callStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args) => {
         if (args === undefined) {
             args = "printWithCallStack";
         }
@@ -106,49 +106,30 @@ function runTheFunctionBasedOnShortcut(args) {
         let errorLogString = `error_log`;
         let newLine = ``;
 
-        if (configurations.useEchoInstead || args == `useEchoInstead`) {
+
+        //Check if the keyboard args is set and use them if they are set else use settings from configuraiton
+        const useEchoInstead = args === `useEchoInstead` ? true : configurations.useEchoInstead;
+        const printWithCallStack = args === `printWithCallStack` ? true : configurations.printWithCallStack;
+        const varDumpVariable = args === `varDumpVariable` ? true : configurations.varDumpVariable;
+
+        if (useEchoInstead) {
             errorLogString = `echo`;
             newLine = ` . "<br>"`;
         }
 
-        if (configurations.varDumpVariable || args == `varDumpVariable`) {
+        if (varDumpVariable) {
 
-            selectedVarDump = selectedVar;
-
-            if (!selectedVarDump.startsWith('$')) {
-                selectedVarDump = `$${selectedVarDump}`;
-            }
-
-            if (selectedVarDump.startsWith('$_')) {
-                selectedVarDump = selectedVarDump.replace('$_', '$__');
-            }
-
-            const {
-                ['Space before var_dump']: spaceBeforeVarDump,
-                ['$']: dollarSign,
-                ...objectWithoutSpaceBeforeVarDumpAndDollarSign
-            }
-                = configurations.varDumpSpecialChars;
-
-            //Replace all occurences of $ with i except first occurence
-            selectedVarDump = selectedVarDump.slice(0, 1) + selectedVarDump.slice(1).replaceAll('$', dollarSign)
-
-            const toBeReplaced = Object.keys(objectWithoutSpaceBeforeVarDumpAndDollarSign);
-            const replaceWith = Object.values(objectWithoutSpaceBeforeVarDumpAndDollarSign);
-
-            toBeReplaced.forEach((tag, i) => selectedVarDump = selectedVarDump.replace(new RegExp("\\" + tag, "g"), replaceWith[i]))
-
-            selectedVarDump = `${selectedVarDump}${spaceBeforeVarDump}var_dump`;
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
-                `${indentation}ob_start(); var_dump(${selectedVar});\n${indentation}${selectedVarDump} = rtrim(ob_get_clean());\n`
+                `${indentation}$var_dump_variable = ${selectedVar};\n` +
+                `${indentation}ob_start();\n` +
+                `${indentation}var_dump(${selectedVar});\n` +
+                `${indentation}${selectedVar} = rtrim(ob_get_clean()); \n`
             );
+
         }
         configurations.errorLogs.forEach(errorLog => {
             errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
-            if (configurations.varDumpVariable || args == `varDumpVariable`) {
-                errorLog = errorLog.replaceAll(selectedVar, selectedVarDump);
-            }
 
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
@@ -156,10 +137,17 @@ function runTheFunctionBasedOnShortcut(args) {
             );
         });
 
-        if (configurations.printCallStack || args == `printWithCallStack`) {
+        if (varDumpVariable) {
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
-                `${indentation}${errorLogString}((new \\Exception())->getTraceAsString()${newLine});\n`
+                `${indentation}${selectedVar} = $var_dump_variable;\n`
+            );
+        }
+
+        if (printWithCallStack) {
+            editBuilder.insert(
+                new vscode.Position(selectedLine + 1, 0),
+                `${indentation}${errorLogString} ((new \\Exception()) -> getTraceAsString()${newLine}); \n`
             );
         }
 
