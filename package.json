@@ -93,13 +93,25 @@
                         "properties": {
                             "errorLog": {
                                 "type": "string",
-                                "description": "This will be error logged. Use ${selectedVar} for the selected variable"
+                                "description": "This will be error logged. Use ${selectedVar} for the selected variable",
+                                "default": "Error logged: ${selectedVar}"
                             },
                             "varDumpOccurencesToUseVariableName": {
                                 "type": "array",
+                                "items": {
+                                    "type": "number",
+                                    "default": 1
+                                },
                                 "description": "Set the occurences of selected var in string where the variable name should be used instead of the var_dump variable"
                             }
-                        }
+                        },
+                        "default": {
+                            "errorLog": "Error logged: ${selectedVar}",
+                            "varDumpOccurencesToUseVariableName": [
+                                1
+                            ]
+                        },
+                        "additionalProperties": false
                     },
                     "default": [
                         {
