@@ -17,7 +17,7 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const callStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args) => {
+    const printWithCallStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args) => {
         if (args === undefined) {
             args = "printWithCallStack";
         }
@@ -41,10 +41,15 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
+    const deleteErrorLogs = vscode.commands.registerCommand("extension.betterPhpErrorLogger.deleteErrorLogs", (args) => {
+        deleteError_logs();
+    });
+
     context.subscriptions.push(errorLog);
-    context.subscriptions.push(callStack);
+    context.subscriptions.push(printWithCallStack);
     context.subscriptions.push(varDumpVariable);
     context.subscriptions.push(useEchoInstead);
+    context.subscriptions.push(deleteErrorLogs);
 }
 
 function runTheFunctionBasedOnShortcut(args) {
@@ -236,6 +241,32 @@ function getIndentation(editor, document, selectedLine) {
     return indentation;
 }
 
+function deleteError_logs() {
+    console.log("herinde")
+    // /\berror_log\b\s*\(.*?(?=;)\;/g To delete error_logs()
+    // /\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;/g To delete ob_start() and var_dump($var_dump_variable)
+    const editor = vscode.window.activeTextEditor;
+    const document = editor.document;
+
+    //Get all text in editor.
+    const text = document.getText();
+
+    if (!text.includes("error_log")) {
+        return;
+    }
+
+    let newText = text.replace(/\berror_log\b\s*\(.*?(?=;)\;/g, ``);
+
+    //Get postion of last char on last line
+    const lastLine = document.lineCount - 1;
+    const lastLineLastChar = document.lineAt(lastLine).range.end.character;
+
+    editor.edit(editBuilder => {
+        editBuilder.replace(new vscode.Range(0, 0, lastLine, lastLineLastChar), newText);
+    })
+
+}
+
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
@@ -245,3 +276,4 @@ module.exports = {
     activate,
     deactivate
 }
+

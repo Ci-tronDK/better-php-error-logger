@@ -7,7 +7,8 @@ Use these keyboard shortcuts:
                 `Ctrl + Alt + D` when a variable is selected to error log.  
                 `Ctrl + Alt + Shift + D` to also print call stack,                   
                 `Ctrl + Alt + Shift + E` to var_dump variable,    
-                `Ctrl + Alt + Shift + F` to use Echo instead  
+                `Ctrl + Alt + Shift + F` to use Echo instead,
+                `Ctrl + Alt + Shift + X` to delete all error_logs in file
 
 Change keyboard shortcuts in VS Code shortcut settings.
 

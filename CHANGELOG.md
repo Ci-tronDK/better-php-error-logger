@@ -2,6 +2,12 @@
 
 
 ## [Change Log]
+Version 0.078 26/5 2022 22.39 CEST
+- Added so you can delete all error_logs in file by pressing Ctrl + Alt + Shift + X.
+
+Version 0.077 26/5 2022 14.28 CEST
+- Added some defaults for settings.
+
 Version 0.076 26/5 2022 13.45 CEST
 - Change how var_dumping works again. :) So it creates a variable, and user can set occurences of that variable to be replaced by the selected values in settings. Small fixes. Made README.md prettier and changed to reflect change.
 
