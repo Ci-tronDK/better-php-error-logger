@@ -103,14 +103,18 @@ function runTheFunctionBasedOnShortcut(args) {
             selectedVar = defaultVariableName;
         }
 
-        let errorLogString = `error_log`;
-        let newLine = ``;
-
 
         //Check if the keyboard args is set and use them if they are set else use settings from configuraiton
         const useEchoInstead = args === `useEchoInstead` ? true : configurations.useEchoInstead;
         const printWithCallStack = args === `printWithCallStack` ? true : configurations.printWithCallStack;
         const varDumpVariable = args === `varDumpVariable` ? true : configurations.varDumpVariable;
+
+        let errorLogString = `error_log`;
+        let newLine = ``;
+        let varDumpString = `$var_dump_variable`;
+        let startIndex = 0;
+        let endIndex = 0;
+
 
         if (useEchoInstead) {
             errorLogString = `echo`;
@@ -118,18 +122,38 @@ function runTheFunctionBasedOnShortcut(args) {
         }
 
         if (varDumpVariable) {
-
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
-                `${indentation}$var_dump_variable = ${selectedVar};\n` +
                 `${indentation}ob_start();\n` +
                 `${indentation}var_dump(${selectedVar});\n` +
-                `${indentation}${selectedVar} = rtrim(ob_get_clean()); \n`
+                `${indentation}${varDumpString} = rtrim(ob_get_clean()); \n`
             );
 
         }
-        configurations.errorLogs.forEach(errorLog => {
-            errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
+        configurations.errorLogs.forEach(errorLogObject => {
+            let errorLog = errorLogObject.errorLog.replaceAll("${selectedVar}", selectedVar);
+
+            if (varDumpVariable) {
+
+                errorLog = errorLog.replaceAll(selectedVar, varDumpString);
+
+                varDumpOccurencesToUseVariableName = errorLogObject.varDumpOccurencesToUseVariableName;
+
+                if (varDumpOccurencesToUseVariableName !== undefined) {
+
+                    //Sort number array ascending
+                    varDumpOccurencesToUseVariableName.sort(function (a, b) { return a - b });
+
+                    let counter = 0;
+                    varDumpOccurencesToUseVariableName.forEach(occurence => {
+                        startIndex = errorLog.split(varDumpString, occurence - counter).join(varDumpString).length;
+                        endIndex = startIndex + varDumpString.length;
+                        errorLog = errorLog.substring(0, startIndex) + selectedVar + errorLog.substring(endIndex);
+                        counter++;
+                    })
+
+                }
+            }
 
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
@@ -137,12 +161,6 @@ function runTheFunctionBasedOnShortcut(args) {
             );
         });
 
-        if (varDumpVariable) {
-            editBuilder.insert(
-                new vscode.Position(selectedLine + 1, 0),
-                `${indentation}${selectedVar} = $var_dump_variable;\n`
-            );
-        }
 
         if (printWithCallStack) {
             editBuilder.insert(

@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.076 26/5 2022 13.45 CEST
+- Change how var_dumping works again. :) So it creates a variable, and user can set occurences of that variable to be replaced by the selected values in settings. Small fixes. Made README.md prettier and changed to reflect change.
+
 Version 0.075 25/5 2022 19.57 CEST
 - Changed how var_dumping works, so there are nothing with special characters. It uses a temporary variable to store the old variable. Changed how it checks for settings/keyboard shortcuts. Removed all settings with special chars. Changed command name from callStack to printWithCallStack.
 

@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customisation options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.75",
+    "version": "0.0.76",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -88,16 +88,33 @@
                 "betterPhpErrorLogger.errorLogs": {
                     "type": "array",
                     "items": {
-                        "type": "string",
-                        "description": "This will be error logged"
+                        "type": "object",
+                        "description": "This will be error logged",
+                        "properties": {
+                            "errorLog": {
+                                "type": "string",
+                                "description": "This will be error logged. Use ${selectedVar} for the selected variable"
+                            },
+                            "varDumpOccurencesToUseVariableName": {
+                                "type": "array",
+                                "description": "Set the occurences of selected var in string where the variable name should be used instead of the var_dump variable"
+                            }
+                        }
                     },
                     "default": [
-                        "'${selectedVar}: ' . print_r(${selectedVar}, true)",
-                        "'in ' . __FILE__ . ' on line ' . __LINE__"
+                        {
+                            "errorLog": "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+                            "varDumpOccurencesToUseVariableName": [
+                                1
+                            ]
+                        },
+                        {
+                            "errorLog": "'in ' . __FILE__ . ' on line ' . __LINE__"
+                        }
                     ],
-                    "description": "Write an array, each value will be error logged. Use ${selectedVar} for the selected variable"
+                    "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable. Use varDumpOccurencesToUseVariableName, when you want to use the variable name instead of the var_dump variable"
                 },
-                "betterPhpErrorLogger.printCallStack": {
+                "betterPhpErrorLogger.printWithCallStack": {
                     "type": "boolean",
                     "default": false,
                     "description": "Set this to true to also print call stack"
