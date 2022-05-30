@@ -42,7 +42,11 @@ function activate(context) {
     });
 
     const deleteErrorLogs = vscode.commands.registerCommand("extension.betterPhpErrorLogger.deleteErrorLogs", (args) => {
-        deleteError_logs();
+        if (args === undefined) {
+            args = "deleteErrorLogs";
+        }
+
+        deleteError_logs(args);
     });
 
     context.subscriptions.push(errorLog);
@@ -50,6 +54,7 @@ function activate(context) {
     context.subscriptions.push(varDumpVariable);
     context.subscriptions.push(useEchoInstead);
     context.subscriptions.push(deleteErrorLogs);
+
 }
 
 function runTheFunctionBasedOnShortcut(args) {
@@ -241,21 +246,48 @@ function getIndentation(editor, document, selectedLine) {
     return indentation;
 }
 
-function deleteError_logs() {
-    console.log("herinde")
+function deleteError_logs(args) {
+
+    const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
     // /\berror_log\b\s*\(.*?(?=;)\;/g To delete error_logs()
     // /\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;/g To delete ob_start() and var_dump($var_dump_variable)
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
 
+
     //Get all text in editor.
     const text = document.getText();
+    let newText = text;
 
-    if (!text.includes("error_log")) {
+    if (!text.includes("error_log") &&
+        !text.includes("var_dump") &&
+        !text.includes("echo") &&
+        !text.includes(configurations.defaultVariable.name) &&
+        !text.includes(configurations.defaultVariable.value)) {
         return;
     }
 
-    let newText = text.replace(/\berror_log\b\s*\(.*?(?=;)\;/g, ``);
+    if (text.includes("error_log")) {
+        newText = newText.replace(/\berror_log\b\s*\(.*?(?=;)\;/g, ``);
+    }
+
+    if (text.includes("var_dump")) {
+        newText = newText.replace(/\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;/g, ``);
+        newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;/g, ``);
+    }
+
+    if (text.includes("echo")) {
+        newText = newText.replace(/\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);/g, ``);
+    }
+
+    if (text.includes(configurations.defaultVariable.name && configurations.defaultVariable.value)) {
+        newText = newText.replace(new RegExp(`\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;`, 'g'), ``);
+    }
+
+    if (newText === text) {
+        return;
+    }
+
 
     //Get postion of last char on last line
     const lastLine = document.lineCount - 1;

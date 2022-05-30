@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.079 30/5 2022 19.20 CEST
+- Made so when you delete error_logs, you also delete var_dumps and echos and default variable. Changed shortcuts. Updated README.md to reflect change.
+
 Version 0.078 26/5 2022 22.39 CEST
 - Added so you can delete all error_logs in file by pressing Ctrl + Alt + Shift + X.
 
