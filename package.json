@@ -35,7 +35,8 @@
         "onCommand:extension.betterPhpErrorLogger.printWithCallStack",
         "onCommand:extension.betterPhpErrorLogger.varDumpVariable",
         "onCommand:extension.betterPhpErrorLogger.useEchoInstead",
-        "onCommand:extension.betterPhpErrorLogger.deleteErrorLogs"
+        "onCommand:extension.betterPhpErrorLogger.deleteErrorLogs",
+        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBuffer"
     ],
     "main": "./extension.js",
     "contributes": {
@@ -55,6 +56,14 @@
             {
                 "command": "extension.betterPhpErrorLogger.useEchoInstead",
                 "title": "Use echo instead"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.deleteErrorLogs",
+                "title": "Delete error logs"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBuffer",
+                "title": "Get current output buffer"
             }
         ],
         "keybindings": [
@@ -86,6 +95,12 @@
                 "command": "extension.betterPhpErrorLogger.deleteErrorLogs",
                 "key": "ctrl+alt+x",
                 "mac": "ctrl+alt+x"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBuffer",
+                "key": "ctrl+alt+o",
+                "mac": "ctrl+alt+o",
+                "args": "printCurrentOutputBuffer"
             }
         ],
         "configuration": {

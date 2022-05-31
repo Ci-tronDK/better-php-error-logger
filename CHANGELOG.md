@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.078 31/5 2022 19.11 CEST
+- Made so when you delete error_logs, it also removes new lines. Made so you can also print current output buffer.
+
 Version 0.079 30/5 2022 19.20 CEST
 - Made so when you delete error_logs, you also delete var_dumps and echos and default variable. Changed shortcuts. Updated README.md to reflect change.
 

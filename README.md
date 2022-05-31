@@ -4,11 +4,13 @@ This is a modification to Easy PHP Error Logger by dhide, where there are some c
 
 
 Use these keyboard shortcuts:  
-                `Ctrl + Alt + D` when a variable is selected to error log.  D for Default.  
-                `Ctrl + Alt + C` to also print call stack.                  C for Call Stack.                     
-                `Ctrl + Alt + V` to var_dump variable.                      V for var_dump.      
-                `Ctrl + Alt + E` to use Echo instead.                       E for Echo.    
-                `Ctrl + Alt + X` to delete all error_logs, var_dumps, echos with () and /<br> inside  in file
+                `Ctrl + Alt + D` when a variable is selected to error log.      D for Default.  
+                `Ctrl + Alt + C` to also print call stack.                      C for Call Stack.                     
+                `Ctrl + Alt + V` to var_dump variable.                          V for var_dump.      
+                `Ctrl + Alt + E` to use Echo instead.                           E for Echo.   
+                `Ctrl + Alt + O` to print current output buffer.                O for Output buffer.  
+                `Ctrl + Alt + X` to delete all error_logs, var_dumps, echos with () and \<br> inside in file  
+                
 
 Change keyboard shortcuts in VS Code shortcut settings.
 
@@ -29,26 +31,26 @@ When var_dumping a variable a temporary variable will be created, it will use th
 
 The default values are  
 
-    ```json
-    [
-        {
-            "errorLog": "'${selectedVar}: ' . print_r(${selectedVar}, true)",
-            "varDumpOccurencesToUseVariableName": [
-                1
-            ]
-        },
-        {
-            "errorLog": "'in ' . __FILE__ . ' on line ' . __LINE__"
-        }
-    ]
-    ```
+```json
+[
+    {
+        "errorLog": "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+        "varDumpOccurencesToUseVariableName": [
+            1
+        ]
+    },
+    {
+        "errorLog": "'in ' . __FILE__ . ' on line ' . __LINE__"
+    }
+]
+```
                     
  
 Change betterPhpErrorLogger.defaultVariable to set which variable name and value will be used when no variable is selected. The default values are:  
 
-    ```json
-    {  
-        "name": "$here",  
-        "value": "__CLASS__ . '::' . __FUNCTION__"  
-    }
-    ```
+```json
+{  
+    "name": "$here",  
+    "value": "__CLASS__ . '::' . __FUNCTION__"  
+}
+```

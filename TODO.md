@@ -12,8 +12,8 @@ https://stackoverflow.com/questions/38678283/contributing-configuration-of-type-
 
 
 - Make so you can use string like template literals and when you do that you can choose to use double quotes.
-- Make so error_log will be printed better places, not right after function and arrays. Or before statement closes, so after ;.
+- Make so error_log will be printed better places, not right after function and arrays. Or before statement closes, so after ;. Or in html.
 - Maybe print output buffer get_contents
-- Shortcut to delete all error_logs (maybe echos), call stack.
+- Shortcut to delete all error_logs (maybe echos), call stack. ✓ Maybe delete empty lines.
 
  Change to typescript.

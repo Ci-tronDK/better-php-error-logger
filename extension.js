@@ -49,11 +49,20 @@ function activate(context) {
         deleteError_logs(args);
     });
 
+    const printCurrentOutputBuffer = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBuffer", (args) => {
+        if (args === undefined) {
+            args = "printCurrentOutputBuffer";
+        }
+
+        runTheFunctionBasedOnShortcut(args);
+    });
+
     context.subscriptions.push(errorLog);
     context.subscriptions.push(printWithCallStack);
     context.subscriptions.push(varDumpVariable);
     context.subscriptions.push(useEchoInstead);
     context.subscriptions.push(deleteErrorLogs);
+    context.subscriptions.push(printCurrentOutputBuffer);
 
 }
 
@@ -72,6 +81,10 @@ function runTheFunctionBasedOnShortcut(args) {
 
     const selection = editor.selection;
     let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+
+    if (args === "printCurrentOutputBuffer") {
+        selectedVar = "ob_get_contents()";
+    }
 
     //Check if the braces in the selected variable are balanced
     if (!isBalanced(selectedVar)) {
@@ -124,7 +137,6 @@ function runTheFunctionBasedOnShortcut(args) {
         let varDumpString = `$var_dump_variable`;
         let startIndex = 0;
         let endIndex = 0;
-
 
         if (useEchoInstead) {
             errorLogString = `echo`;
@@ -254,7 +266,6 @@ function deleteError_logs(args) {
     const editor = vscode.window.activeTextEditor;
     const document = editor.document;
 
-
     //Get all text in editor.
     const text = document.getText();
     let newText = text;
@@ -268,20 +279,20 @@ function deleteError_logs(args) {
     }
 
     if (text.includes("error_log")) {
-        newText = newText.replace(/\berror_log\b\s*\(.*?(?=;)\;/g, ``);
+        newText = newText.replace(/\berror_log\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
     }
 
     if (text.includes("var_dump")) {
-        newText = newText.replace(/\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;/g, ``);
-        newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;/g, ``);
+        newText = newText.replace(/\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;\n?/g, ``);
+        newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
     }
 
     if (text.includes("echo")) {
-        newText = newText.replace(/\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);/g, ``);
+        newText = newText.replace(/\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);\r?\n?/g, ``);
     }
 
     if (text.includes(configurations.defaultVariable.name && configurations.defaultVariable.value)) {
-        newText = newText.replace(new RegExp(`\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;`, 'g'), ``);
+        newText = newText.replace(new RegExp(`\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;\r?\n?`, 'g'), ``);
     }
 
     if (newText === text) {
