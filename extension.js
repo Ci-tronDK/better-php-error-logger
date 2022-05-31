@@ -128,9 +128,9 @@ function runTheFunctionBasedOnShortcut(args) {
 
 
         //Check if the keyboard args is set and use them if they are set else use settings from configuraiton
-        const useEchoInstead = args === `useEchoInstead` ? true : configurations.useEchoInstead;
-        const printWithCallStack = args === `printWithCallStack` ? true : configurations.printWithCallStack;
-        const varDumpVariable = args === `varDumpVariable` ? true : configurations.varDumpVariable;
+        const useEchoInstead = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
+        const printWithCallStack = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
+        const varDumpVariable = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
 
         let errorLogString = `error_log`;
         let newLine = ``;

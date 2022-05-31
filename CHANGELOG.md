@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.081 31/5 2022 20.42 CEST
+- Made so when you have set a setting for the default shortcut to true, it will do the opposite in shortcuts, so it doesn't do the same. Changed README.md to reflect change.
+
 Version 0.080 31/5 2022 19.11 CEST
 - Made so when you delete error_logs, it also removes new lines. Made so you can also print current output buffer.
 
@@ -15,7 +18,7 @@ Version 0.077 26/5 2022 14.28 CEST
 - Added some defaults for settings.
 
 Version 0.076 26/5 2022 13.45 CEST
-- Change how var_dumping works again. :) So it creates a variable, and user can set occurences of that variable to be replaced by the selected values in settings. Small fixes. Made README.md prettier and changed to reflect change.
+- Changed how var_dumping works again. :) So it creates a variable, and user can set occurences of that variable to be replaced by the selected values in settings. Small fixes. Made README.md prettier and changed to reflect change.
 
 Version 0.075 25/5 2022 19.57 CEST
 - Changed how var_dumping works, so there are nothing with special characters. It uses a temporary variable to store the old variable. Changed how it checks for settings/keyboard shortcuts. Removed all settings with special chars. Changed command name from callStack to printWithCallStack.
