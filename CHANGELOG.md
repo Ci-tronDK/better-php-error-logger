@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.084 1/6 2022 21.33 CEST
+- Removed a space in call stack. When you delete error_logs new lines before will also be removed and an error message will appear when nothing to delete. Made so it should work better if you error_log parameters in functions, where { not is on same line. Also made so it should work better on arrays, so if you will error_log an array, where values are being set. It will put the error_logs after ;.
+
 Version 0.081 31/5 2022 20.42 CEST
 - Made so when you have set a setting for the default shortcut to true, it will do the opposite in shortcuts, so it doesn't do the same. Changed README.md to reflect change.
 

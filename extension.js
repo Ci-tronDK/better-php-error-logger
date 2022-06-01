@@ -81,10 +81,21 @@ function runTheFunctionBasedOnShortcut(args) {
 
     const selection = editor.selection;
     let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+    let selectedLine = selection.active.line;
+    const indentation = getIndentation(editor, document, selectedLine);
+    const selectedLineText = document.lineAt(selectedLine).text;
 
-    if (args === "printCurrentOutputBuffer") {
-        selectedVar = "ob_get_contents()";
-    }
+    //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
+    const useEchoInstead = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
+    const printWithCallStack = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
+    const varDumpVariable = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
+    selectedVar = args === "printCurrentOutputBuffer" ? "ob_get_contents()" : selectedVar;
+
+    let errorLogString = `error_log`;
+    let newLine = ``;
+    let varDumpString = `$var_dump_variable`;
+    let startIndex = 0;
+    let endIndex = 0;
 
     //Check if the braces in the selected variable are balanced
     if (!isBalanced(selectedVar)) {
@@ -97,8 +108,18 @@ function runTheFunctionBasedOnShortcut(args) {
         return;
     }
 
-    const selectedLine = selection.active.line;
-    const indentation = getIndentation(editor, document, selectedLine);
+    //If { is not on same line as function call, then move to the line with the {
+
+    if (selectedLineText.includes('function') && !selectedLineText.includes('{')) {
+        //Find first occurence of { after function
+        selectedLine = symbolFinderLoop(document, selectedLine, '{');
+    }
+
+    //If selected line contains array and the next non-whitespace line is a (, then move to the first line with ;
+    if (selectedLineText.includes('array') && selectedLineText.includes('=')) {
+        selectedLine = symbolFinderLoop(document, selectedLine, '(');
+        selectedLine = symbolFinderLoop(document, selectedLine - 3, ';');
+    }
 
     editor.edit(editBuilder => {
 
@@ -125,18 +146,6 @@ function runTheFunctionBasedOnShortcut(args) {
             );
             selectedVar = defaultVariableName;
         }
-
-
-        //Check if the keyboard args is set and use them if they are set else use settings from configuraiton
-        const useEchoInstead = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
-        const printWithCallStack = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
-        const varDumpVariable = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
-
-        let errorLogString = `error_log`;
-        let newLine = ``;
-        let varDumpString = `$var_dump_variable`;
-        let startIndex = 0;
-        let endIndex = 0;
 
         if (useEchoInstead) {
             errorLogString = `echo`;
@@ -187,7 +196,7 @@ function runTheFunctionBasedOnShortcut(args) {
         if (printWithCallStack) {
             editBuilder.insert(
                 new vscode.Position(selectedLine + 1, 0),
-                `${indentation}${errorLogString} ((new \\Exception()) -> getTraceAsString()${newLine}); \n`
+                `${indentation}${errorLogString}((new \\Exception()) -> getTraceAsString()${newLine}); \n`
             );
         }
 
@@ -275,27 +284,29 @@ function deleteError_logs(args) {
         !text.includes("echo") &&
         !text.includes(configurations.defaultVariable.name) &&
         !text.includes(configurations.defaultVariable.value)) {
+        vscode.window.showErrorMessage(`Nothing to delete.`);
         return;
     }
 
     if (text.includes("error_log")) {
-        newText = newText.replace(/\berror_log\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
+        newText = newText.replace(/\r?\n?\berror_log\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
     }
 
     if (text.includes("var_dump")) {
-        newText = newText.replace(/\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;\n?/g, ``);
+        newText = newText.replace(/\r?\n?\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;\n?/g, ``);
         newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
     }
 
     if (text.includes("echo")) {
-        newText = newText.replace(/\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);\r?\n?/g, ``);
+        newText = newText.replace(/\r?\n?\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);\r?\n?/g, ``);
     }
 
     if (text.includes(configurations.defaultVariable.name && configurations.defaultVariable.value)) {
-        newText = newText.replace(new RegExp(`\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;\r?\n?`, 'g'), ``);
+        newText = newText.replace(new RegExp(`\r?\n?\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;\r?\n?`, 'g'), ``);
     }
 
     if (newText === text) {
+        vscode.window.showErrorMessage(`Nothing to delete.`);
         return;
     }
 
@@ -307,7 +318,18 @@ function deleteError_logs(args) {
     editor.edit(editBuilder => {
         editBuilder.replace(new vscode.Range(0, 0, lastLine, lastLineLastChar), newText);
     })
+}
 
+function symbolFinderLoop(document, selectedLine, symbol) {
+    let symbolPosition = selectedLine;
+    for (let i = selectedLine + 1; i < document.lineCount; i++) {
+        const lineText = document.lineAt(i).text;
+        if (lineText.includes(symbol)) {
+            symbolPosition = i;
+            break;
+        }
+    }
+    return symbolPosition;
 }
 
 exports.activate = activate;
