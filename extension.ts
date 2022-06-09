@@ -1,6 +1,11 @@
 // The module 'vscode' contains the VS Code extensibility API
+
+
+
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
+//const vscode = require('vscode');
+import * as vscode from 'vscode';
+import { Disposable, TextDocument, TextEditor, TextEditorEdit } from "vscode";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -8,8 +13,8 @@ const vscode = require('vscode');
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context) {
-    const errorLog = vscode.commands.registerCommand("extension.betterPhpErrorLogger", (args) => {
+function activate(context: { subscriptions: Disposable[]; }): void {
+    const errorLog: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger", (args: string): void => {
         if (args === undefined) {
             args = "";
         }
@@ -17,7 +22,7 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const printWithCallStack = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args) => {
+    const printWithCallStack: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args: string): void => {
         if (args === undefined) {
             args = "printWithCallStack";
         }
@@ -25,7 +30,7 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const varDumpVariable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.varDumpVariable", (args) => {
+    const varDumpVariable: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.varDumpVariable", (args: string): void => {
         if (args === undefined) {
             args = "varDumpVariable";
         }
@@ -33,7 +38,7 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const useEchoInstead = vscode.commands.registerCommand("extension.betterPhpErrorLogger.useEchoInstead", (args) => {
+    const useEchoInstead: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.useEchoInstead", (args: string): void => {
         if (args === undefined) {
             args = "useEchoInstead";
         }
@@ -41,15 +46,11 @@ function activate(context) {
         runTheFunctionBasedOnShortcut(args);
     });
 
-    const deleteErrorLogs = vscode.commands.registerCommand("extension.betterPhpErrorLogger.deleteErrorLogs", (args) => {
-        if (args === undefined) {
-            args = "deleteErrorLogs";
-        }
-
-        deleteError_logs(args);
+    const deleteErrorLogs: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.deleteErrorLogs", (args: string): void => {
+        deleteError_logs();
     });
 
-    const printCurrentOutputBuffer = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBuffer", (args) => {
+    const printCurrentOutputBuffer: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBuffer", (args: string): void => {
         if (args === undefined) {
             args = "printCurrentOutputBuffer";
         }
@@ -66,8 +67,8 @@ function activate(context) {
 
 }
 
-function runTheFunctionBasedOnShortcut(args) {
-    const editor = vscode.window.activeTextEditor;
+function runTheFunctionBasedOnShortcut(args: string) {
+    const editor: TextEditor | undefined = vscode.window.activeTextEditor;
     if (!editor) {
         return;
     }
@@ -80,15 +81,15 @@ function runTheFunctionBasedOnShortcut(args) {
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
     const selection = editor.selection;
-    let selectedVar = document.getText(selection).replaceAll(`'`, `"`);
+    let selectedVar: string = document.getText(selection).replaceAll(`'`, `"`);
     let selectedLine = selection.active.line;
     const indentation = getIndentation(editor, document, selectedLine);
     const selectedLineText = document.lineAt(selectedLine).text;
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-    const useEchoInstead = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
-    const printWithCallStack = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
-    const varDumpVariable = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
+    const useEchoInstead: string = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
+    const printWithCallStack: string = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
+    const varDumpVariable: string = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
     selectedVar = args === "printCurrentOutputBuffer" ? "ob_get_contents()" : selectedVar;
 
     let errorLogString = `error_log`;
@@ -110,23 +111,45 @@ function runTheFunctionBasedOnShortcut(args) {
 
     //If { is not on same line as function call, then move to the line with the {
 
-    if (selectedLineText.includes('function') && !selectedLineText.includes('{')) {
+    if (selectedLineText.includes('function') || selectedLineText.includes('switch')) {
         //Find first occurence of { after function
-        selectedLine = symbolFinderLoop(document, selectedLine, '{');
+        selectedLine = symbolFinderLoop(document, selectedLine - 1, '{');
+    }
+
+    if (selectedLineText.includes('switch')) {
+        //Find the } after the switch
+
+        //Function where you pass string and index of first bracket and returns index of the matching bracket
+
+        // function matchBrackets(string, index) {
+        //     let openBrackets = 0;
+        //     let closeBrackets = 0;
+        //     for (let i = index; i < string.length; i++) {
+        //         if (string[i] === '{') {
+        //             openBrackets++;
+        //         } else if (string[i] === '}') {
+        //             closeBrackets++;
+        //         }
+        //         if (openBrackets === closeBrackets) {
+        //             return i;
+        //         }
+        //     }
+        //     return -1;
+        // }
+        selectedLine = symbolFinderLoop(document, selectedLine + 2, '}');
     }
 
     //If selected line contains array and the next non-whitespace line is a (, then move to the first line with ;
-    if (selectedLineText.includes('array') && selectedLineText.includes('=')) {
-        selectedLine = symbolFinderLoop(document, selectedLine, '(');
-        selectedLine = symbolFinderLoop(document, selectedLine - 3, ';');
+    if (!selectedLineText.includes(';') && selectedVar.trim().length !== 0 && !selectedLineText.includes('function') && !selectedLineText.includes('switch')) {
+        selectedLine = symbolFinderLoop(document, selectedLine, ';');
     }
 
-    editor.edit(editBuilder => {
+    editor.edit((editBuilder: TextEditorEdit) => {
 
         let newLineIfOnLastLine = ``;
         //If selection is on last line, add new line
         if (selection.start.line === document.lineCount - 1) {
-            editBuilder.insert(new vscode.Position(document.lineCount), '\n');
+            editBuilder.insert(new vscode.Position(document.lineCount, 0), '\n');
             newLineIfOnLastLine = '\n';
         }
 
@@ -141,7 +164,7 @@ function runTheFunctionBasedOnShortcut(args) {
             }
 
             editBuilder.insert(
-                new vscode.Position(selectedLine + position),
+                new vscode.Position(selectedLine + position, 0),
                 `${indentation}${defaultVariableName} = ${defaultVariableValue};${newLineIfOnLastLine}`
             );
             selectedVar = defaultVariableName;
@@ -161,22 +184,22 @@ function runTheFunctionBasedOnShortcut(args) {
             );
 
         }
-        configurations.errorLogs.forEach(errorLogObject => {
+        configurations.errorLogs.forEach((errorLogObject: { errorLog: string, varDumpOccurencesToUseVariableName: number[] }): void => {
             let errorLog = errorLogObject.errorLog.replaceAll("${selectedVar}", selectedVar);
 
             if (varDumpVariable) {
 
                 errorLog = errorLog.replaceAll(selectedVar, varDumpString);
 
-                varDumpOccurencesToUseVariableName = errorLogObject.varDumpOccurencesToUseVariableName;
+                let varDumpOccurencesToUseVariableName = errorLogObject.varDumpOccurencesToUseVariableName;
 
                 if (varDumpOccurencesToUseVariableName !== undefined) {
 
                     //Sort number array ascending
-                    varDumpOccurencesToUseVariableName.sort(function (a, b) { return a - b });
+                    varDumpOccurencesToUseVariableName.sort(function (a: number, b: number) { return a - b });
 
                     let counter = 0;
-                    varDumpOccurencesToUseVariableName.forEach(occurence => {
+                    varDumpOccurencesToUseVariableName.forEach((occurence: number): void => {
                         startIndex = errorLog.split(varDumpString, occurence - counter).join(varDumpString).length;
                         endIndex = startIndex + varDumpString.length;
                         errorLog = errorLog.substring(0, startIndex) + selectedVar + errorLog.substring(endIndex);
@@ -204,8 +227,8 @@ function runTheFunctionBasedOnShortcut(args) {
 }
 
 //Check if string braces are balanced
-function isBalanced(string) {
-    let stack = [];
+function isBalanced(string: string): boolean {
+    let stack: string[] = [];
     let openBraces = ["(", "[", "{"];
     let closeBraces = [")", "]", "}"];
     let braceMap = {
@@ -219,7 +242,7 @@ function isBalanced(string) {
         if (openBraces.includes(char)) {
             stack.push(char);
         } else if (closeBraces.includes(char)) {
-            let last = stack.pop();
+            let last = stack.pop() as '(' | '[' | '{';
             if (braceMap[last] !== char) {
                 return false;
             }
@@ -228,7 +251,7 @@ function isBalanced(string) {
     return stack.length === 0;
 }
 
-function getIndentation(editor, document, selectedLine) {
+function getIndentation(editor: TextEditor, document: TextDocument, selectedLine: number): string {
     const selectedLineChars = document.lineAt(selectedLine).text.split('');
     let indentLevel = 0;
     let tabs = false;
@@ -267,12 +290,17 @@ function getIndentation(editor, document, selectedLine) {
     return indentation;
 }
 
-function deleteError_logs(args) {
+function deleteError_logs() {
 
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
     // /\berror_log\b\s*\(.*?(?=;)\;/g To delete error_logs()
     // /\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;/g To delete ob_start() and var_dump($var_dump_variable)
-    const editor = vscode.window.activeTextEditor;
+    const editor: TextEditor | undefined = vscode.window.activeTextEditor;
+
+    if (!editor) {
+        return;
+    }
+
     const document = editor.document;
 
     //Get all text in editor.
@@ -285,6 +313,10 @@ function deleteError_logs(args) {
         !text.includes(configurations.defaultVariable.name) &&
         !text.includes(configurations.defaultVariable.value)) {
         vscode.window.showErrorMessage(`Nothing to delete.`);
+
+        //MessageController.get(this.editor)?.showMessage(loc.rejectReason, position);
+
+
         return;
     }
 
@@ -315,12 +347,12 @@ function deleteError_logs(args) {
     const lastLine = document.lineCount - 1;
     const lastLineLastChar = document.lineAt(lastLine).range.end.character;
 
-    editor.edit(editBuilder => {
+    editor.edit((editBuilder): void => {
         editBuilder.replace(new vscode.Range(0, 0, lastLine, lastLineLastChar), newText);
     })
 }
 
-function symbolFinderLoop(document, selectedLine, symbol) {
+function symbolFinderLoop(document: TextDocument, selectedLine: number, symbol: string): number {
     let symbolPosition = selectedLine;
     for (let i = selectedLine + 1; i < document.lineCount; i++) {
         const lineText = document.lineAt(i).text;

@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "module": "CommonJS",
+        "target": "ES2021",
+        "checkJs": false, /* Typecheck .js files. */
+        "outDir": "./built",
+        "allowJs": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "esModuleInterop": true,
+        "lib": [
+            "ES2021"
+        ]
+    },
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "./built/**/*"
+    ]
+}

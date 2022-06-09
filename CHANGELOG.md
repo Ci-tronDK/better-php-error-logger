@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.088 9/6 2022 18.31 CEST
+- Changed how it works, when it not should print right after array, so that it prints after ;. Will be made better later. Changed to typescript.
+
 Version 0.084 1/6 2022 21.33 CEST
 - Removed a space in call stack. When you delete error_logs new lines before will also be removed and an error message will appear when nothing to delete. Made so it should work better if you error_log parameters in functions, where { not is on same line. Also made so it should work better on arrays, so if you will error_log an array, where values are being set. It will put the error_logs after ;.
 
