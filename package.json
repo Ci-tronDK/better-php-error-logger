@@ -191,7 +191,7 @@
     "scripts": {
         "lint": "eslint .",
         "pretest": "npm run lint",
-        "test": "node ./test/runTest.js"
+        "test": "node ./built/test/runTest.js"
     },
     "devDependencies": {
         "@types/vscode": "^1.66.0",
