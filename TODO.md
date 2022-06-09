@@ -17,4 +17,11 @@ https://stackoverflow.com/questions/38678283/contributing-configuration-of-type-
 - Make so error_log will be printed better places, not right after function and arrays. ✓ Or before statement closes, so after ;. Or in html. Also place things correctly when deleting.
 - Change var_dump settings a little.
 
- Change to typescript.
+Change to typescript. Continue with that.
+Change how indentation works, so it finds where log is going to be inserted.
+Change readme totally.
+Maybe select multiple variables and print as array.
+Change where error messages are located.
+Make so you can use output buffer with other shortcuts.
+Log before return of variable is after return.
+Find out of you can see if you are inside a function or block.
