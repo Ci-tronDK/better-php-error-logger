@@ -58,12 +58,40 @@ function activate(context: { subscriptions: Disposable[]; }): void {
         runTheFunctionBasedOnShortcut(args);
     });
 
+    const printCurrentOutputBufferAndCallStack: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack", (args: string): void => {
+        if (args === undefined) {
+            args = "printCurrentOutputBufferWithCallStack";
+        }
+
+        runTheFunctionBasedOnShortcut(args);
+    });
+
+    const printCurrentOutputBufferVarDump: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump", (args: string): void => {
+        if (args === undefined) {
+            args = "printCurrentOutputBufferVarDump";
+        }
+
+        runTheFunctionBasedOnShortcut(args);
+    });
+
+    const printCurrentOutputBufferUseEcho: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho", (args: string): void => {
+
+        if (args === undefined) {
+            args = "printCurrentOutputBufferUseEcho";
+        }
+
+        runTheFunctionBasedOnShortcut(args);
+    });
+
     context.subscriptions.push(errorLog);
     context.subscriptions.push(printWithCallStack);
     context.subscriptions.push(varDumpVariable);
     context.subscriptions.push(useEchoInstead);
     context.subscriptions.push(deleteErrorLogs);
     context.subscriptions.push(printCurrentOutputBuffer);
+    context.subscriptions.push(printCurrentOutputBufferAndCallStack);
+    context.subscriptions.push(printCurrentOutputBufferVarDump);
+    context.subscriptions.push(printCurrentOutputBufferUseEcho);
 
 }
 
@@ -87,10 +115,14 @@ function runTheFunctionBasedOnShortcut(args: string) {
     const selectedLineText = document.lineAt(selectedLine).text;
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-    const useEchoInstead: string = args === `useEchoInstead` ? !configurations.useEchoInstead : configurations.useEchoInstead;
-    const printWithCallStack: string = args === `printWithCallStack` ? !configurations.printWithCallStack : configurations.printWithCallStack;
-    const varDumpVariable: string = args === `varDumpVariable` ? !configurations.varDumpVariable : configurations.varDumpVariable;
-    selectedVar = args === "printCurrentOutputBuffer" ? "ob_get_contents()" : selectedVar;
+    const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
+    const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack : configurations.printWithCallStack;
+    const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariableSettings.varDumpVariable : configurations.varDumpVariableSettings.varDumpVariable;
+    selectedVar = args === "printCurrentOutputBuffer" ||
+        args === 'printCurrentOutputBufferUseEcho' ||
+        args === 'printCurrentOutputBufferWithCallStack' ||
+        args === 'printCurrentOutputBufferVarDump' ?
+        "ob_get_contents()" : selectedVar;
 
     let errorLogString = `error_log`;
     let newLine = ``;
@@ -147,6 +179,8 @@ function runTheFunctionBasedOnShortcut(args: string) {
     editor.edit((editBuilder: TextEditorEdit) => {
 
         let newLineIfOnLastLine = ``;
+        let errorLogsToReplaceOccurences: object;
+        let errorLogOccurencesReplaceCounter = 0;
         //If selection is on last line, add new line
         if (selection.start.line === document.lineCount - 1) {
             editBuilder.insert(new vscode.Position(document.lineCount, 0), '\n');
@@ -183,17 +217,22 @@ function runTheFunctionBasedOnShortcut(args: string) {
                 `${indentation}${varDumpString} = rtrim(ob_get_clean()); \n`
             );
 
+            errorLogsToReplaceOccurences = configurations.varDumpVariableSettings.errorLogsToReplaceOccurences;
         }
-        configurations.errorLogs.forEach((errorLogObject: { errorLog: string, varDumpOccurencesToUseVariableName: number[] }): void => {
-            let errorLog = errorLogObject.errorLog.replaceAll("${selectedVar}", selectedVar);
-
+        let varDumpOccurencesToUseVariableName: number[] | undefined;
+        configurations.errorLogs.forEach((errorLog: string): void => {
+            errorLog = errorLog.replaceAll("${selectedVar}", selectedVar);
             if (varDumpVariable) {
-
                 errorLog = errorLog.replaceAll(selectedVar, varDumpString);
+                errorLogOccurencesReplaceCounter++;
+                let key = `error_log_${errorLogOccurencesReplaceCounter}`;
+                varDumpOccurencesToUseVariableName = [];
 
-                let varDumpOccurencesToUseVariableName = errorLogObject.varDumpOccurencesToUseVariableName;
+                if (errorLogsToReplaceOccurences[key as keyof typeof errorLogsToReplaceOccurences]) {
+                    varDumpOccurencesToUseVariableName = errorLogsToReplaceOccurences[key as keyof typeof errorLogsToReplaceOccurences];
+                }
 
-                if (varDumpOccurencesToUseVariableName !== undefined) {
+                if (varDumpOccurencesToUseVariableName.length !== 0) {
 
                     //Sort number array ascending
                     varDumpOccurencesToUseVariableName.sort(function (a: number, b: number) { return a - b });

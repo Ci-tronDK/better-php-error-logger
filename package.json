@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.88",
+    "version": "0.0.90",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -37,7 +37,10 @@
         "onCommand:extension.betterPhpErrorLogger.varDumpVariable",
         "onCommand:extension.betterPhpErrorLogger.useEchoInstead",
         "onCommand:extension.betterPhpErrorLogger.deleteErrorLogs",
-        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBuffer"
+        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBuffer",
+        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack",
+        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
+        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho"
     ],
     "main": "./built/extension.js",
     "contributes": {
@@ -65,6 +68,18 @@
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBuffer",
                 "title": "Get current output buffer"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack",
+                "title": "Get current output buffer with call stack"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
+                "title": "Get current output buffer, var dump"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
+                "title": "Get current output buffer, use echo"
             }
         ],
         "keybindings": [
@@ -99,9 +114,27 @@
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBuffer",
-                "key": "ctrl+alt+o",
-                "mac": "ctrl+alt+o",
+                "key": "ctrl+alt+o d",
+                "mac": "ctrl+alt+o d",
                 "args": "printCurrentOutputBuffer"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack",
+                "key": "ctrl+alt+o c",
+                "mac": "ctrl+alt+o c",
+                "args": "printCurrentOutputBufferWithCallStack"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
+                "key": "ctrl+alt+o v",
+                "mac": "ctrl+alt+o v",
+                "args": "printCurrentOutputBufferVarDump"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
+                "key": "ctrl+alt+o e",
+                "mac": "ctrl+alt+o e",
+                "args": "printCurrentOutputBufferUseEcho"
             }
         ],
         "configuration": {
@@ -110,53 +143,115 @@
                 "betterPhpErrorLogger.errorLogs": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "description": "This will be error logged",
-                        "properties": {
-                            "errorLog": {
-                                "type": "string",
-                                "description": "This will be error logged. Use ${selectedVar} for the selected variable",
-                                "default": "Error logged: ${selectedVar}"
-                            },
-                            "varDumpOccurencesToUseVariableName": {
-                                "type": "array",
-                                "items": {
-                                    "type": "number",
-                                    "default": 1
-                                },
-                                "description": "Set the occurences of selected var in string where the variable name should be used instead of the var_dump variable"
-                            }
-                        },
-                        "default": {
-                            "errorLog": "Error logged: ${selectedVar}",
-                            "varDumpOccurencesToUseVariableName": [
-                                1
-                            ]
-                        },
-                        "additionalProperties": false
+                        "type": "string",
+                        "description": "This will be error logged"
                     },
                     "default": [
-                        {
-                            "errorLog": "'${selectedVar}: ' . print_r(${selectedVar}, true)",
-                            "varDumpOccurencesToUseVariableName": [
-                                1
-                            ]
-                        },
-                        {
-                            "errorLog": "'in ' . __FILE__ . ' on line ' . __LINE__"
-                        }
+                        "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+                        "'in ' . __FILE__ . ' on line ' . __LINE__"
                     ],
-                    "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable. Use varDumpOccurencesToUseVariableName, when you want to use the variable name instead of the var_dump variable"
+                    "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable."
                 },
                 "betterPhpErrorLogger.printWithCallStack": {
                     "type": "boolean",
                     "default": false,
                     "description": "Set this to true to also print call stack"
                 },
-                "betterPhpErrorLogger.varDumpVariable": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Set this to true to var_dump the selected variable"
+                "betterPhpErrorLogger.varDumpVariableSettings": {
+                    "type": "object",
+                    "properties": {
+                        "varDumpVariable": {
+                            "type": "boolean",
+                            "description": "Set this to true to var_dump the selected variable",
+                            "default": false
+                        },
+                        "errorLogsToReplaceOccurences": {
+                            "type": "object",
+                            "properties": {
+                                "error_log_1": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_2": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_3": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_4": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_5": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_6": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_7": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_8": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                },
+                                "error_log_9": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "number",
+                                        "description": "Occurences in error_log to replace"
+                                    }
+                                }
+                            },
+                            "description": "Use errorLogsToReplaceOccurences to write error_log_# with an array of occurences of $var_dump_variable to replace with the selected variable.",
+                            "default": {
+                                "error_log_1": [
+                                    1
+                                ]
+                            },
+                            "minProperties": 0,
+                            "additionalProperties": false
+                        }
+                    },
+                    "default": {
+                        "varDumpVariable": false,
+                        "errorLogsToReplaceOccurences": {
+                            "error_log_1": [
+                                1
+                            ]
+                        }
+                    },
+                    "description": "Set this to true to var_dump the selected variable and replace the occurence with the variable name",
+                    "additionalProperties": false
                 },
                 "betterPhpErrorLogger.useEchoInstead": {
                     "type": "boolean",
@@ -194,15 +289,15 @@
         "test": "node ./built/test/runTest.js"
     },
     "devDependencies": {
-        "@types/vscode": "^1.66.0",
         "@types/glob": "^7.2.0",
         "@types/mocha": "^9.1.1",
         "@types/node": "14.x",
+        "@types/vscode": "^1.66.0",
+        "@vscode/test-electron": "^2.1.3",
         "eslint": "^8.14.0",
         "glob": "^8.0.1",
         "mocha": "^9.2.2",
-        "typescript": "^4.7.3",
-        "@vscode/test-electron": "^2.1.3"
+        "typescript": "^4.7.3"
     },
     "repository": {
         "type": "git",

@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.090 25/6 2022 15.35 CEST
+- Made so you can use output buffer shortcut together with the other shortcuts. Changed how var_dump_variable works, so it belongs to varDumpSettings in settings. Updated README.md.
+
 Version 0.088 9/6 2022 18.31 CEST
 - Changed how it works, when it not should print right after array, so that it prints after ;. Will be made better later. Changed to typescript.
 
