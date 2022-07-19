@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.091 19/7 2022 18.48 CEST
+- Small change to README.md, so tables should look better.
+
 Version 0.090 25/6 2022 15.35 CEST
 - Made so you can use output buffer shortcut together with the other shortcuts. Changed how var_dump_variable works, so it belongs to varDumpSettings in settings. Updated README.md.
 

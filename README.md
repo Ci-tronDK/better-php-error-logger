@@ -3,9 +3,9 @@
 With this extension you can use the error_log function in PHP with keyboard shortcuts. There are some customization options.
 Here is a list of shotcuts you can use. 
 
-| Shortcuts 	     | Description                               	                                                                   |  Why                                    |
-|-----------	     |-------------------------------------------	                                                                   |----------------	                     |
-| `Ctrl + Alt + D`   | To to error log when a variable is selected. 	                                                               | D for Default. 	                     |
+| Shortcuts 	     | Description                               	                                                               |  Why                                    |
+|------------------- |---------------------------------------------------------------------------------------------------------------- |---------------------------------------- |
+| `Ctrl + Alt + D`   | To to error log when a variable is selected. 	                                                               | D for Default. 	                 |
 | `Ctrl + Alt + C`   | To also print call stack. (No Call Stack, when it is true for default in settings)                              | C for Call Stack.                       | 
 | `Ctrl + Alt + V`   | To var_dump variable. (No Var dump, when it is true for default in settings)                                    | V for var_dump.                         |
 | `Ctrl + Alt + E`   | To use Echo instead.  (No Use Echo instead, when it is true for default in settings)                            | E for Echo.                             |
