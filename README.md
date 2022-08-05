@@ -41,37 +41,6 @@ You can change some settings to always use them when using the default shotcut `
 
 Set `betterPhpErrorLogger.printCallStack` to true to also print call stack.  
 Set `betterPhpErrorLogger.useEchoInstead` to true to echo instead of error_log.
-Set `betterPhpErrorLogger.varDumpSettings` to an object where varDumpVariable is true to var_dump variable.
+Set `betterPhpErrorLogger.varDumpVariable` to true to var_dump variable.
 If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.
-For the other settings things it will use your defaults. 
-
-Because you can't error_log a var_dump I use a variable called $var_dump_variable, and get the contents from the output buffer.  
-But then the if you print out a string with the variable name, it will be called $var_dump_variable.
-To change that you can set `betterPhpErrorLogger.varDumpSettings` to an object where `errorLogsToReplaceOccurences` is an object where you can call each property `error_log_#number`, where number is the number of the errorlog. As a value for the properties, you can write an array of occurences, where each occurence of $var_dump_variable will be replaced with the selected value.
-
-By default it is set as this:
-```json
-{
-    "error_log_1": [
-        1
-    ]
-}
-```
-
-That means that in the first error_log, which by default is:  
-`"'${selectedVar}: ' . print_r(${selectedVar}, true)"`, when you var_dump it will be changed to: 
-
-```php
-ob_start();
-var_dump($selected_var);
-$var_dump_variable = rtrim(ob_get_clean()); 
-error_log('$var_dump_variable: ' . print_r($var_dump_variable, true));
-```
-and then the first occurence in the first error_log will be changed to the selectedVar, so it will look like this:  
-
-```php
-ob_start();
-var_dump($selected_var);
-$var_dump_variable = rtrim(ob_get_clean()); 
-error_log('$selected_var: ' . print_r($var_dump_variable, true));
-```
+For the other settings things it will use your defaults.

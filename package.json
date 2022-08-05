@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.91",
+    "version": "0.0.93",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -157,101 +157,10 @@
                     "default": false,
                     "description": "Set this to true to also print call stack"
                 },
-                "betterPhpErrorLogger.varDumpVariableSettings": {
-                    "type": "object",
-                    "properties": {
-                        "varDumpVariable": {
-                            "type": "boolean",
-                            "description": "Set this to true to var_dump the selected variable",
-                            "default": false
-                        },
-                        "errorLogsToReplaceOccurences": {
-                            "type": "object",
-                            "properties": {
-                                "error_log_1": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_2": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_3": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_4": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_5": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_6": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_7": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_8": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                },
-                                "error_log_9": {
-                                    "type": "array",
-                                    "items": {
-                                        "type": "number",
-                                        "description": "Occurences in error_log to replace"
-                                    }
-                                }
-                            },
-                            "description": "Use errorLogsToReplaceOccurences to write error_log_# with an array of occurences of $var_dump_variable to replace with the selected variable.",
-                            "default": {
-                                "error_log_1": [
-                                    1
-                                ]
-                            },
-                            "minProperties": 0,
-                            "additionalProperties": false
-                        }
-                    },
-                    "default": {
-                        "varDumpVariable": false,
-                        "errorLogsToReplaceOccurences": {
-                            "error_log_1": [
-                                1
-                            ]
-                        }
-                    },
-                    "description": "Set this to true to var_dump the selected variable and replace the occurence with the variable name",
-                    "additionalProperties": false
+                "betterPhpErrorLogger.varDumpVariable": {
+                    "type": "boolean",
+                    "description": "Set this to true to var_dump the selected variable",
+                    "default": false
                 },
                 "betterPhpErrorLogger.useEchoInstead": {
                     "type": "boolean",

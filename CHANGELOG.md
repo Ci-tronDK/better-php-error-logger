@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.093 5/8 2022 22.58 CEST
+- Changed how var_dumping works again, so user should not have to use settings. So removed varDumpVariableSettings and made it back to just varDumpVariable. But it doesn't work with $$ variables yet. Deleted from README.md to reflect change.
+
 Version 0.091 19/7 2022 18.48 CEST
 - Small change to README.md, so tables should look better.
 
