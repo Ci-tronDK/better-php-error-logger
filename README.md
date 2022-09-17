@@ -20,11 +20,15 @@ You can change the keyboard shortcuts in VS Code shortcut settings.
 In VS Code settings or `settings.json`, you can change some settings.
 
 To change what will be error logged you can set `betterPhpErrorLogger.errorLogs` to an array of strings, where each value string will be error logged.  
-You can use `${selectedVar}` for the selected variable.  
+You can use `${selectedVar}` for the selected variable.  Use `${selectedVarString}` for the name of the variable, by default the two values are the same.  
+The exception is when var_dumping variable:  
+- when echoing `${selectedVar}` will be changed to "var_dump(`${selectedVar}`) " 
+- when error_logging a new variable will be created called "$var_dump", which gets the output buffer
+
 The default values are:  
 ```json
 [
-    "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+    "'${selectedVarString}: ' . print_r(${selectedVar}, true)",
     "'in ' . __FILE__ . ' on line ' . __LINE__"
 ]
 ```
@@ -44,3 +48,5 @@ Set `betterPhpErrorLogger.useEchoInstead` to true to echo instead of error_log.
 Set `betterPhpErrorLogger.varDumpVariable` to true to var_dump variable.
 If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.
 For the other settings things it will use your defaults.
+
+Deletion may not work correctly.

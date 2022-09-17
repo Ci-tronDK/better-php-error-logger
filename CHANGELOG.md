@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.096 17/9 2022 13.18 CEST
+- Moved functions to different files. Changed how var_dumping is working again, so it is easier to create a string name for variable, when var_dumping. But user have to set both ${selectedVar} and ${selectedVarString} in settings, by default the same, except when var_dumping; when echoing variable will be changed to var_dump(${selectedVar}), when error_logging a new variable will be created called $var_dump. Removed parentheses when echoing. When var_dumping and echoing all periods before the selected variable will be changed to commas, so text will be printed in correct order. Deletion may not work correctly now.
+
 Version 0.093 5/8 2022 22.58 CEST
 - Changed how var_dumping works again, so user should not have to use settings. So removed varDumpVariableSettings and made it back to just varDumpVariable. But it doesn't work with $$ variables yet. Deleted from README.md to reflect change.
 

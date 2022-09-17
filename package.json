@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.93",
+    "version": "0.0.96",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -147,10 +147,10 @@
                         "description": "This will be error logged"
                     },
                     "default": [
-                        "'${selectedVar}: ' . print_r(${selectedVar}, true)",
+                        "'${selectedVarString}: ' . print_r(${selectedVar}, true)",
                         "'in ' . __FILE__ . ' on line ' . __LINE__"
                     ],
-                    "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable."
+                    "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable. And ${selectedVarString} for the variable string (Read readme)"
                 },
                 "betterPhpErrorLogger.printWithCallStack": {
                     "type": "boolean",
