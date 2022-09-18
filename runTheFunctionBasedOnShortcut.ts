@@ -17,16 +17,21 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
+
+    //Get all selected text
+    //const allSelectedText = editor.selections.map(selection => document.getText(selection));
+
+
     const selection = editor.selection;
     let selectedVar: string = document.getText(selection).replaceAll(`'`, `"`);
-    const selectedVarString = selectedVar;
+    let selectedVarString = selectedVar;
     let selectedLine = selection.active.line;
     const indentation = getIndentation(editor, document, selectedLine);
     const selectedLineText = document.lineAt(selectedLine).text;
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
     const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
-    const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack : configurations.printWithCallStack;
+    const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
     const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
     selectedVar = args === "printCurrentOutputBuffer" ||
         args === 'printCurrentOutputBufferUseEcho' ||
@@ -36,6 +41,7 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
     let errorLogString = `error_log`;
     let newLine = ``;
+    let position = 1;
 
     //Check if the braces in the selected variable are balanced
     if (!isBalanced(selectedVar)) {
@@ -82,28 +88,11 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
     editor.edit((editBuilder: TextEditorEdit) => {
 
-        let newLineIfOnLastLine = ``;
-        //If selection is on last line, add new line
-        if (selection.start.line === document.lineCount - 1) {
-            editBuilder.insert(new vscode.Position(document.lineCount, 0), '\n');
-            newLineIfOnLastLine = '\n';
-        }
-
         // Check if the selected variable is empty, if so, get the default selected variable
         if (selectedVar.trim().length === 0) {
-            const defaultVariableName = configurations.defaultVariable.name;
-            const defaultVariableValue = configurations.defaultVariable.value;
-            let position = 0;
-            //If selected line contains text
-            if (document.lineAt(selectedLine).text.trim().length !== 0) {
-                position = 1;
-            }
-
-            editBuilder.insert(
-                new vscode.Position(selectedLine + position, 0),
-                `${indentation}${defaultVariableName} = ${defaultVariableValue};${newLineIfOnLastLine}`
-            );
-            selectedVar = defaultVariableName;
+            selectedVarString = configurations.defaultVariable.name;
+            selectedVar = configurations.defaultVariable.value;
+            position = 0;
         }
 
         let parantheseLeft = `(`;
@@ -123,10 +112,9 @@ export function runTheFunctionBasedOnShortcut(args: string) {
             let varDumpSelectedVar = `var_dump(${selectedVar})`;
 
             if (!useEchoInstead) {
-                let varDumpNewVar = `$var_dump_${selectedVar.replaceAll("$", "")}`;
-                varDumpNewVar = `$var_dump`;
+                let varDumpNewVar = `$var_dump`;
                 editBuilder.insert(
-                    new vscode.Position(selectedLine + 1, 0),
+                    new vscode.Position(selectedLine + position, 0),
                     `${indentation}ob_start();\n` +
                     `${indentation}${varDumpSelectedVar};\n` +
                     `${indentation}${varDumpNewVar} = rtrim(ob_get_clean()); \n`
@@ -165,16 +153,22 @@ export function runTheFunctionBasedOnShortcut(args: string) {
             }
 
             editBuilder.insert(
-                new vscode.Position(selectedLine + 1, 0),
+                new vscode.Position(selectedLine + position, 0),
                 `${indentation}${errorLogString}${parantheseLeft}${errorLog}${newLine}${parantheseRight}; \n`
             );
         });
 
 
         if (printWithCallStack) {
+            let getTrace = `getTrace`;
+
+            if (!configurations.printWithCallStack.printCallStackAsArray) {
+                getTrace += `AsString`;
+            }
+
             editBuilder.insert(
-                new vscode.Position(selectedLine + 1, 0),
-                `${indentation}${errorLogString}${parantheseLeft} (new \\Exception()) -> getTraceAsString()${newLine}${parantheseRight}; \n`
+                new vscode.Position(selectedLine + position, 0),
+                `${indentation}${errorLogString}${parantheseLeft} (new \\Exception()) -> ${getTrace}()${newLine}${parantheseRight}; \n`
             );
         }
 

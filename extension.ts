@@ -10,6 +10,11 @@ import { runTheFunctionBasedOnShortcut } from './runTheFunctionBasedOnShortcut';
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 
+// multiple $ in variable name
+// string, before, after, prefix, suffix for error_log, var_dump, echo
+// defeault name when nothing selected, don't store in variable
+// bette delete, maybe setting for what to delete, maybe use error_log array
+
 /**
  * @param {vscode.ExtensionContext} context
  */

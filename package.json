@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.96",
+    "version": "0.0.97",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -153,9 +153,26 @@
                     "description": "Write an array, with objects with the property errorLog, where each objects errorlog value will be error logged. Use ${selectedVar} for the selected variable. And ${selectedVarString} for the variable string (Read readme)"
                 },
                 "betterPhpErrorLogger.printWithCallStack": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Set this to true to also print call stack"
+                    "type": "object",
+                    "title": "Print with call stack",
+                    "properties": {
+                        "printWithCallStack": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to also print call stack"
+                        },
+                        "printCallStackAsArray": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to print call stack as array"
+                        }
+                    },
+                    "default": {
+                        "printWithCallStack": false,
+                        "printCallStackAsArray": false
+                    },
+                    "description": "Set this to true to also print call stack and set printCallStackAsArray to true to print call stack as array",
+                    "additionalProperties": false
                 },
                 "betterPhpErrorLogger.varDumpVariable": {
                     "type": "boolean",
@@ -173,8 +190,8 @@
                     "properties": {
                         "name": {
                             "type": "string",
-                            "description": "Set the name of the variable, when no variable is selected",
-                            "default": "$here"
+                            "description": "Set the name of the selectedVarString, when no variable is selected",
+                            "default": "here"
                         },
                         "value": {
                             "type": "string",
@@ -183,10 +200,10 @@
                         }
                     },
                     "default": {
-                        "name": "$here",
+                        "name": "here",
                         "value": "__CLASS__ . '::' . __FUNCTION__"
                     },
-                    "description": "Set name and value of the default variable, when no variable is selected",
+                    "description": "Set name and value of the default selectedVarString, when no variable is selected",
                     "additionalProperties": false
                 }
             }
