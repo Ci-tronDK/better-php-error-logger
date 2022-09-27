@@ -228,5 +228,8 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/MartinZielke/better-php-error-logger"
+    },
+    "sponsor": {
+        "url": "https://github.com/sponsors/MartinZielke"
     }
 }

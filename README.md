@@ -43,7 +43,7 @@ You can use a default variable when no variable is selected, change `betterPhpEr
 
 You can change some settings to always use them when using the default shotcut `Ctrl + Alt + D`.
 
-Set `betterPhpErrorLogger.printCallStack` to an object with the property printCallStackAsArray set to true to also print call stack. You can also choose to print the call stack as an array, if you set the property printCallStackAsArray as array to true.  
+Set `betterPhpErrorLogger.printCallStack` to an object with the property printCallStack set to true to also print call stack. You can also choose to print the call stack as an array, if you set the property printCallStackAsArray as array to true.  
 Set `betterPhpErrorLogger.useEchoInstead` to true to echo instead of error_log.  
 Set `betterPhpErrorLogger.varDumpVariable` to true to var_dump variable.
 If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.

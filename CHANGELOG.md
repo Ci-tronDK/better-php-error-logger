@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.098 27/9 2022 21.40 CEST
+- Added Github sponsor link and fixed readme error about printing call stack.
+
 Version 0.097 18/9 2022 12.15 CEST
 - Added defaultname as selectedVarString and defaultVariable as selectedVar when nothing is selected, so things work better. Made an option to print Call Stack as an array.
 
