@@ -23,8 +23,8 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
 
     const selection = editor.selection;
-    let selectedVar: string = document.getText(selection).replaceAll(`'`, `"`);
-    let selectedVarString = selectedVar;
+    let selectedVar: string = document.getText(selection);
+    let selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
     let selectedLine = selection.active.line;
     const indentation = getIndentation(editor, document, selectedLine);
     const selectedLineText = document.lineAt(selectedLine).text;
@@ -33,15 +33,18 @@ export function runTheFunctionBasedOnShortcut(args: string) {
     const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
     const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
     const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
-    selectedVar = args === "printCurrentOutputBuffer" ||
-        args === 'printCurrentOutputBufferUseEcho' ||
-        args === 'printCurrentOutputBufferWithCallStack' ||
-        args === 'printCurrentOutputBufferVarDump' ?
-        "ob_get_contents()" : selectedVar;
+
+    let position = 1;
+
+    // Change selectedVarString and selectedVar if outputbuffer is being printed.
+    const printCurrentOutputBuffer = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump'];
+    selectedVarString = printCurrentOutputBuffer.includes(args) ? "Output buffer" : selectedVarString;
+    selectedVar = printCurrentOutputBuffer.includes(args) ? "ob_get_contents()" : selectedVar;
+    position = printCurrentOutputBuffer.includes(args) ? 0 : position;
 
     let errorLogString = `error_log`;
     let newLine = ``;
-    let position = 1;
+
 
     //Check if the braces in the selected variable are balanced
     if (!isBalanced(selectedVar)) {
