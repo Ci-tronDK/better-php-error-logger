@@ -3,12 +3,13 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.0.99",
+    "version": "0.0.10",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
     },
     "categories": [
+        "Debuggers",
         "Other"
     ],
     "keywords": [
@@ -16,15 +17,21 @@
         "error",
         "logger",
         "log",
+        "debug",
+        "debugger",
+        "debugging",
         "customisation",
         "customization",
         "error logger",
         "errorlog",
         "error_log",
+        "output buffer",
+        "ob_get_contents",
         "better",
         "var_dump",
         "var dump",
         "call stack",
+        "stack trace",
         "echo error",
         "log error",
         "log error message",
@@ -231,5 +238,12 @@
     },
     "sponsor": {
         "url": "https://github.com/sponsors/MartinZielke"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/MartinZielke/better-php-error-logger/issues"
+    },
+    "author": {
+        "name": "Martin Vest Zielke"
+    },
+    "license": "MIT"
 }

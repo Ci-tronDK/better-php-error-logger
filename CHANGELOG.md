@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.0.10 20/10 2022 19.22 CEST
+- Added some keywords to package.json and also added bugs, author and license fields. Changed how output buffer works when printing output buffer and also a small change when var_dumping variable, so it will not be set to a variable.
+
 Version 0.0.99 19/10 2022 18.01 CEST
 - Made so it also prints "Output buffer" and position is correct when printing output buffer, removed " and ' from string, so it is easier to print an array value. Fixed missing dot on all versions in changelog.
 

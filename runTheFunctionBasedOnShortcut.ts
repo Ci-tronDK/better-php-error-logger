@@ -111,18 +111,26 @@ export function runTheFunctionBasedOnShortcut(args: string) {
         // let varDumpString = `\${"${selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``).replaceAll(`$`, `💲`)}"}`;
 
 
+        let outbutbufferVariable = `$_ob`;
         if (varDumpVariable) {
             let varDumpSelectedVar = `var_dump(${selectedVar})`;
 
             if (!useEchoInstead) {
-                let varDumpNewVar = `$var_dump`;
+
+                let ob_start = `${indentation}ob_start();\n`;
+
+                if (printCurrentOutputBuffer.includes(args)) {
+                    varDumpSelectedVar = `var_dump(${outbutbufferVariable}=${selectedVar})`;
+                    ob_start = ``;
+                }
+                // let varDumpNewVar = `$var_dump`;
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
-                    `${indentation}ob_start();\n` +
-                    `${indentation}${varDumpSelectedVar};\n` +
-                    `${indentation}${varDumpNewVar} = rtrim(ob_get_clean()); \n`
+                    `${ob_start}${indentation}${varDumpSelectedVar};\n`
+                    //+
+                    // `${indentation}${varDumpNewVar} = rtrim(ob_get_clean()); \n`
                 );
-                selectedVar = varDumpNewVar;
+                selectedVar = 'rtrim(ob_get_clean())';
             } else {
                 selectedVar = varDumpSelectedVar;
             }
@@ -160,6 +168,13 @@ export function runTheFunctionBasedOnShortcut(args: string) {
                 `${indentation}${errorLogString}${parantheseLeft}${errorLog}${newLine}${parantheseRight}; \n`
             );
         });
+
+        if (printCurrentOutputBuffer.includes(args) && varDumpVariable) {
+            editBuilder.insert(
+                new vscode.Position(selectedLine + position, 0),
+                `echo ${outbutbufferVariable}; \n`
+            );
+        }
 
 
         if (printWithCallStack) {
