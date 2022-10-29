@@ -2,7 +2,7 @@
 
 
 ## [Change Log]
-Version 0.1.05 29/10 2022 15.18 CEST
+Version 0.1.10 29/10 2022 15.19 CEST
 - Installed PHP Parser to make it easier to find out which kind of variable is selected for better positioning of error_logs and made some changes to positioning, can still be better. Updated README.md file, changed some text and moved all default settings values to top and added some asterisk notes. Commented out deletion of echo's, because I changed how they work a while ago.
 
 Version 0.1.0 20/10 2022 20.02 CEST
