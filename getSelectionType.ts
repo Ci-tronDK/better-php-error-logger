@@ -36,8 +36,6 @@ export const getSelectionType = (file: string, selection: Selection, selectedVar
     //const phpFile = fs.readFileSync(file, 'utf8');
     const parsedphpFile = parser.parseCode(phpFile, file);
     let selectionType = ``;
-    console.log(parsedphpFile.children);
-
 
     //loop through all the children of the parsed php file
     parsedphpFile.children.forEach((child: any) => {
