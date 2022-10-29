@@ -3,6 +3,8 @@ import { TextEditor, TextEditorEdit } from "vscode";
 import { symbolFinderLoop } from "./symbolFinderLoop";
 import { getIndentation } from "./getIndentation";
 import { isBalanced } from "./isBalanced";
+import { getSelectionType } from './getSelectionType';
+
 
 export function runTheFunctionBasedOnShortcut(args: string) {
     const editor: TextEditor | undefined = vscode.window.activeTextEditor;
@@ -21,13 +23,13 @@ export function runTheFunctionBasedOnShortcut(args: string) {
     //Get all selected text
     //const allSelectedText = editor.selections.map(selection => document.getText(selection));
 
-
     const selection = editor.selection;
     let selectedVar: string = document.getText(selection);
+    const selectionType = getSelectionType(document.fileName, selection, selectedVar, document.getText());
+
     let selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
     let selectedLine = selection.active.line;
     const indentation = getIndentation(editor, document, selectedLine);
-    const selectedLineText = document.lineAt(selectedLine).text;
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
     const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
@@ -58,12 +60,12 @@ export function runTheFunctionBasedOnShortcut(args: string) {
     }
 
     //If { is not on same line as function call, then move to the line with the {
-    if (selectedLineText.includes('function') || selectedLineText.includes('switch')) {
+    if (selectionType === 'function_parameter' || selectionType === 'switch_variable') {
         //Find first occurence of { after function
         selectedLine = symbolFinderLoop(document, selectedLine - 1, '{');
     }
 
-    if (selectedLineText.includes('switch')) {
+    if (selectionType === 'switch_variable') {
         //Find the } after the switch
         //Function where you pass string and index of first bracket and returns index of the matching bracket
         // function matchBrackets(string, index) {
@@ -85,7 +87,7 @@ export function runTheFunctionBasedOnShortcut(args: string) {
     }
 
     //If selected line contains array and the next non-whitespace line is a (, then move to the first line with ;
-    if (!selectedLineText.includes(';') && selectedVar.trim().length !== 0 && !selectedLineText.includes('function') && !selectedLineText.includes('switch')) {
+    if (selectionType === 'assigned_variable') {
         selectedLine = symbolFinderLoop(document, selectedLine, ';');
     }
 

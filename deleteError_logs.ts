@@ -38,9 +38,9 @@ export function deleteError_logs() {
         newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
     }
 
-    if (text.includes("echo")) {
-        newText = newText.replace(/\r?\n?\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);\r?\n?/g, ``);
-    }
+    // if (text.includes("echo")) {
+    //     newText = newText.replace(/\r?\n?\becho\b\s*\(.*\<\s*br\s*>\*?.*?(?=;);\r?\n?/g, ``);
+    // }
 
     if (text.includes(configurations.defaultVariable.name && configurations.defaultVariable.value)) {
         newText = newText.replace(new RegExp(`\r?\n?\\${configurations.defaultVariable.name}\\s*=\\s*${configurations.defaultVariable.value}\\s*\;\r?\n?`, 'g'), ``);

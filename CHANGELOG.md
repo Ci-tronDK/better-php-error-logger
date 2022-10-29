@@ -2,6 +2,12 @@
 
 
 ## [Change Log]
+Version 0.1.05 29/10 2022 15.18 CEST
+- Installed PHP Parser to make it easier to find out which kind of variable is selected for better positioning of error_logs and made some changes to positioning, can still be better. Updated README.md file, changed some text and moved all default settings values to top and added some asterisk notes. Commented out deletion of echo's, because I changed how they work a while ago.
+
+Version 0.1.0 20/10 2022 20.02 CEST
+- Wrong version number in previous update, read description there.
+
 Version 0.0.10 20/10 2022 19.22 CEST
 - Added some keywords to package.json and also added bugs, author and license fields. Changed how output buffer works when printing output buffer and also a small change when var_dumping variable, so it will not be set to a variable.
 
