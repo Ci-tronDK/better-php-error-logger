@@ -27,4 +27,6 @@ PHP logo: https://www.php.net/download-logos.php.
 License:  https://creativecommons.org/licenses/by-sa/4.0/
 
 This extensions uses php-parser, which is released under BSD-3 license clause.  
-https://github.com/glayzzle/php-parser
+Copyright (c) 2014, Glayzzle
+All rights reserved.
+https://github.com/glayzzle/php-parser/blob/main/LICENSE
