@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.11 3/11 2022 17.00 CET
+- Added php-parser license text to LICENSE.md and made position a little better after change in last update.
+
 Version 0.1.10 29/10 2022 15.19 CEST
 - Installed PHP Parser to make it easier to find out which kind of variable is selected for better positioning of error_logs and made some changes to positioning, can still be better. Updated README.md file, changed some text and moved all default settings values to top and added some asterisk notes. Commented out deletion of echo's, because I changed how they work a while ago.
 
