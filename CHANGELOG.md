@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.12 22/11 2022 17.05 CET
+- Made some small refactorings and bundled the code using esbuild.
+
 Version 0.1.11 3/11 2022 17.00 CET
 - Added php-parser license text to LICENSE.md and made position a little better after change in last update.
 

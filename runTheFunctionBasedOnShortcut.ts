@@ -59,37 +59,23 @@ export function runTheFunctionBasedOnShortcut(args: string) {
         return;
     }
 
-    //If { is not on same line as function call, then move to the line with the {
-    if (selectionType === 'function_parameter' || selectionType === 'switch_variable') {
-        //Find first occurence of { after function
-        selectedLine = symbolFinderLoop(document, selectedLine - 1, '{');
+
+    const selectionTypeToSelectedLine: {
+        [key: string]: number;
+    } = {
+        //If { is not on same line as function call, then move to the line with the {
+        //Find first occurence of { after function parameter.
+        'function_parameter': symbolFinderLoop(document, selectedLine - 1, '{'),
+
+        //First occurence of { after the variable, then first occurence of } after.
+        'switch_variable': symbolFinderLoop(document, symbolFinderLoop(document, selectedLine - 1, '{') + 2, '}'),
+
+        //Find first occurence of ; after an assigned variable.
+        'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
     }
 
-    if (selectionType === 'switch_variable') {
-        //Find the } after the switch
-        //Function where you pass string and index of first bracket and returns index of the matching bracket
-        // function matchBrackets(string, index) {
-        //     let openBrackets = 0;
-        //     let closeBrackets = 0;
-        //     for (let i = index; i < string.length; i++) {
-        //         if (string[i] === '{') {
-        //             openBrackets++;
-        //         } else if (string[i] === '}') {
-        //             closeBrackets++;
-        //         }
-        //         if (openBrackets === closeBrackets) {
-        //             return i;
-        //         }
-        //     }
-        //     return -1;
-        // }
-        selectedLine = symbolFinderLoop(document, selectedLine + 2, '}');
-    }
+    selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
 
-    //If selected line contains array and the next non-whitespace line is a (, then move to the first line with ;
-    if (selectionType === 'assigned_variable') {
-        selectedLine = symbolFinderLoop(document, selectedLine, ';');
-    }
 
     editor.edit((editBuilder: TextEditorEdit) => {
 

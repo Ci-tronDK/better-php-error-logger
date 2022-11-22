@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.11",
+    "version": "0.1.12",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -219,7 +219,12 @@
     "scripts": {
         "lint": "eslint .",
         "pretest": "npm run lint",
-        "test": "node ./built/test/runTest.js"
+        "test": "node ./built/test/runTest.js",
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "esbuild": "npm run esbuild-base -- --sourcemap",
+        "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
+        "test-compile": "tsc -p ./"
     },
     "devDependencies": {
         "@types/glob": "^7.2.0",
@@ -227,6 +232,7 @@
         "@types/node": "14.x",
         "@types/vscode": "^1.66.0",
         "@vscode/test-electron": "^2.1.3",
+        "esbuild": "^0.15.15",
         "eslint": "^8.14.0",
         "glob": "^8.0.1",
         "mocha": "^9.2.2",
