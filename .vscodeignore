@@ -1,6 +1,5 @@
 .vscode
 node_modules
-out/
 tsconfig.json
 .vscode/**
 .vscode-test/**
@@ -11,3 +10,5 @@ vsc-extension-quickstart.md
 **/jsconfig.json
 **/*.map
 **/.eslintrc.json
+.built
+*.*

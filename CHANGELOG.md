@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.13 22/11 2022 17.22 CET
+- Made a mistake in previous version, where I ignored the out folder with the bundled file and had not set the main property to the bundled file in in package.json. So the extension was not working. This is now fixed.
+
 Version 0.1.12 22/11 2022 17.05 CET
 - Made some small refactorings and bundled the code using esbuild.
 
