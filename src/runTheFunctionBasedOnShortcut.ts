@@ -25,10 +25,31 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
     const selection = editor.selection;
     let selectedVar: string = document.getText(selection);
-    const selectionType = getSelectionType(document.fileName, selection, selectedVar, document.getText());
-
     let selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
     let selectedLine = selection.active.line;
+
+
+    //Only try to position if the use PHP Parser for positioning is true.
+    if (configurations.usePHPParserForPositioning) {
+        const selectionType = getSelectionType(document.fileName, selection, selectedVar, document.getText());
+
+        const selectionTypeToSelectedLine: {
+            [key: string]: number;
+        } = {
+            //If { is not on same line as function call, then move to the line with the {
+            //Find first occurence of { after function parameter.
+            'function_parameter': symbolFinderLoop(document, selectedLine - 1, '{'),
+
+            //First occurence of { after the variable, then first occurence of } after.
+            'switch_variable': symbolFinderLoop(document, symbolFinderLoop(document, selectedLine - 1, '{') + 2, '}'),
+
+            //Find first occurence of ; after an assigned variable.
+            'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
+        }
+
+        selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
+    }
+
     const indentation = getIndentation(editor, document, selectedLine);
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
@@ -58,24 +79,6 @@ export function runTheFunctionBasedOnShortcut(args: string) {
         vscode.window.showErrorMessage(`The selected value can not include ;`);
         return;
     }
-
-
-    const selectionTypeToSelectedLine: {
-        [key: string]: number;
-    } = {
-        //If { is not on same line as function call, then move to the line with the {
-        //Find first occurence of { after function parameter.
-        'function_parameter': symbolFinderLoop(document, selectedLine - 1, '{'),
-
-        //First occurence of { after the variable, then first occurence of } after.
-        'switch_variable': symbolFinderLoop(document, symbolFinderLoop(document, selectedLine - 1, '{') + 2, '}'),
-
-        //Find first occurence of ; after an assigned variable.
-        'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
-    }
-
-    selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
-
 
     editor.edit((editBuilder: TextEditorEdit) => {
 
@@ -167,14 +170,18 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
         if (printWithCallStack) {
             let getTrace = `getTrace`;
+            let print_r_start = `print_r(`;
+            let print_r_end = `, true)`;
 
             if (!configurations.printWithCallStack.printCallStackAsArray) {
                 getTrace += `AsString`;
+                print_r_start = ``;
+                print_r_end = ``;
             }
 
             editBuilder.insert(
                 new vscode.Position(selectedLine + position, 0),
-                `${indentation}${errorLogString}${parantheseLeft} (new \\Exception()) -> ${getTrace}()${newLine}${parantheseRight}; \n`
+                `${indentation}${errorLogString}${parantheseLeft}${print_r_start} (new \\Exception()) -> ${getTrace}()${newLine}${print_r_end}${parantheseRight}; \n`
             );
         }
 

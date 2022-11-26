@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.13",
+    "version": "0.1.15",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -49,7 +49,7 @@
         "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
         "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho"
     ],
-    "main": "./out/main.js",
+    "main": "./out/extension.js",
     "contributes": {
         "commands": [
             {
@@ -212,6 +212,11 @@
                     },
                     "description": "Set name and value of the default selectedVarString, when no variable is selected",
                     "additionalProperties": false
+                },
+                "betterPhpErrorLogger.usePHPParserForPositioning": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Set this to false to not use the vscode-php-parser for positioning. PHP Parser requires valid code. When false, error_logs will always be placed on the next line."
                 }
             }
         }
@@ -221,7 +226,7 @@
         "pretest": "npm run lint",
         "test": "node ./built/test/runTest.js",
         "vscode:prepublish": "npm run esbuild-base -- --minify",
-        "esbuild-base": "esbuild ./extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
         "esbuild": "npm run esbuild-base -- --sourcemap",
         "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
         "test-compile": "tsc -p ./"

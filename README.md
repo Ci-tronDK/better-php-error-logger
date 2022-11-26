@@ -40,7 +40,8 @@ The default values for all the settings for the extension are:
     "printCallStackAsArray": false
 },
 "betterPhpErrorLogger.varDumpVariable": false,
-"betterPhpErrorLogger.useEchoInstead": false
+"betterPhpErrorLogger.useEchoInstead": false,
+"betterPhpErrorLogger.usePHPParserForPositioning": true
 
 ```
 
@@ -60,8 +61,5 @@ Set `betterPhpErrorLogger.varDumpVariable` to true to var_dump variable.
 
 If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.
 For the other settings things it will use your defaults.
-
-
-
-
-
+  
+By default the extension uses PHP Parser to try to position the error_log correctly. If you have problems with this you can set `betterPhpErrorLogger.usePHPParserForPositioning` to false. This will always log on the next line.
