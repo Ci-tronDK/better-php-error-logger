@@ -49,7 +49,7 @@
         "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
         "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho"
     ],
-    "main": "./out/extension.js",
+    "main": "./out/main.js",
     "contributes": {
         "commands": [
             {

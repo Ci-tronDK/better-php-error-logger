@@ -2,7 +2,7 @@
 
 
 ## [Change Log]
-Version 0.1.15 26/11 2022 10.40 CET
+Version 0.1.15 26/11 2022 10.45 CET
 - Added changelog for version 0.1.13. Moved all typescript files to a src folder and added folder to .vscodeignore. Deleted unused images. Made so when you print call stack as array, it uses print_r. Made so user can choose not to use PHP Parser for better positioning and changed README.md to reflect change.
 
 Version 0.1.13 22/11 2022 17.22 CET
