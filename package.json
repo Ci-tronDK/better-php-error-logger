@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.15",
+    "version": "0.1.20",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -38,17 +38,7 @@
         "line number",
         "file name"
     ],
-    "activationEvents": [
-        "onCommand:extension.betterPhpErrorLogger",
-        "onCommand:extension.betterPhpErrorLogger.printWithCallStack",
-        "onCommand:extension.betterPhpErrorLogger.varDumpVariable",
-        "onCommand:extension.betterPhpErrorLogger.useEchoInstead",
-        "onCommand:extension.betterPhpErrorLogger.deleteErrorLogs",
-        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBuffer",
-        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack",
-        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
-        "onCommand:extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho"
-    ],
+    "activationEvents": [],
     "main": "./out/main.js",
     "contributes": {
         "commands": [
@@ -149,6 +139,7 @@
             "properties": {
                 "betterPhpErrorLogger.errorLogs": {
                     "type": "array",
+                    "title": "Error logs",
                     "items": {
                         "type": "string",
                         "description": "This will be error logged"
@@ -183,11 +174,13 @@
                 },
                 "betterPhpErrorLogger.varDumpVariable": {
                     "type": "boolean",
+                    "title": "Var dump variable",
                     "description": "Set this to true to var_dump the selected variable",
                     "default": false
                 },
                 "betterPhpErrorLogger.useEchoInstead": {
                     "type": "boolean",
+                    "title": "Use echo instead",
                     "default": false,
                     "description": "Set this to true to use echo instead of error_log"
                 },
@@ -215,8 +208,47 @@
                 },
                 "betterPhpErrorLogger.usePHPParserForPositioning": {
                     "type": "boolean",
+                    "title": "Use PHP Parser for positioning",
                     "default": true,
                     "description": "Set this to false to not use the vscode-php-parser for positioning. PHP Parser requires valid code. When false, error_logs will always be placed on the next line."
+                },
+                "betterPhpErrorLogger.laravelLog": {
+                    "type": "object",
+                    "title": "Laravel log",
+                    "properties": {
+                        "useLaravelLog": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to use the laravel log function instead of error_log"
+                        },
+                        "laravelLogLevel": {
+                            "type": "string",
+                            "default": "debug",
+                            "enum": [
+                                "debug",
+                                "info",
+                                "notice",
+                                "warning",
+                                "error",
+                                "critical",
+                                "alert",
+                                "emergency"
+                            ],
+                            "description": "Set the laravel log level to use"
+                        }
+                    },
+                    "default": {
+                        "useLaravelLog": false,
+                        "laravelLogLevel": "debug"
+                    },
+                    "description": "Set useLaravelLog to true to use the laravel log function instead of error_log and set laravelLogLevel to the log level you want to use",
+                    "additionalProperties": false
+                },
+                "betterPhpErrorLogger.logOnlyFirstSelection": {
+                    "type": "boolean",
+                    "title": "Log only first selection",
+                    "default": false,
+                    "description": "Set this to true to only log the first selection"
                 }
             }
         }

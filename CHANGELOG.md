@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.20 4/3 2023 14.14 CET
+- Changed logo a little bit. Made so user can choose to use Laravel's log function instead of error_log and the user can also choose the log level for the Laravel log. When a user have selected multiple things, it will now log all of them. This setting can be changed to only log the first selection. The README.md file has been updated to reflect these changes. Deleted acvtivation commands in package.json since VS Code will now generate these automatically from package.json contribution declarations. 
+
 Version 0.1.15 26/11 2022 10.45 CET
 - Added changelog for version 0.1.13. Moved all typescript files to a src folder and added folder to .vscodeignore. Deleted unused images. Made so when you print call stack as array, it uses print_r. Made so user can choose not to use PHP Parser for better positioning and changed README.md to reflect change.
 
