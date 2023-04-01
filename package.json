@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.20",
+    "version": "0.1.24",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -36,7 +36,12 @@
         "log error",
         "log error message",
         "line number",
-        "file name"
+        "file name",
+        "laravel",
+        "laravel error",
+        "laravel log",
+        "laravel debug",
+        "laravel log level"
     ],
     "activationEvents": [],
     "main": "./out/main.js",
@@ -235,11 +240,17 @@
                                 "emergency"
                             ],
                             "description": "Set the laravel log level to use"
+                        },
+                        "chooseLogLevel": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to choose the laravel log level"
                         }
                     },
                     "default": {
                         "useLaravelLog": false,
-                        "laravelLogLevel": "debug"
+                        "laravelLogLevel": "debug",
+                        "chooseLogLevel": false
                     },
                     "description": "Set useLaravelLog to true to use the laravel log function instead of error_log and set laravelLogLevel to the log level you want to use",
                     "additionalProperties": false

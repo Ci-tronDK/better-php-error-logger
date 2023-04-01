@@ -6,7 +6,7 @@ import { isBalanced } from "./isBalanced";
 import { getSelectionType } from './getSelectionType';
 
 
-export function runTheFunctionBasedOnShortcut(args: string) {
+export async function runTheFunctionBasedOnShortcut(args: string) {
     const editor: TextEditor | undefined = vscode.window.activeTextEditor;
     if (!editor) {
         return;
@@ -19,20 +19,97 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
+    //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
+    const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
+    const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
+    const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
 
+    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump'];
+    const printCurrentOutputBuffer = printCurrentOutputBufferArray.includes(args);
+
+    const laravelLog = configurations.laravelLog;
+
+    let errorLogString = `error_log`;
+    let selectedLogLevel = laravelLog.laravelLogLevel;
+
+    if (laravelLog.useLaravelLog && !useEchoInstead) {
+
+        if (laravelLog.chooseLogLevel) {
+
+            //Get logLevelsEnum from package.json file using require.
+            const logLevelsEnum: string[] = require('../package.json').contributes.configuration.properties['betterPhpErrorLogger.laravelLog'].properties.laravelLogLevel.enum;
+
+            // OnDidChangeActive
+            // const timeoutTime = 10000;
+
+            //User should be able to select the log level in quickpick, if user do not select anything within 10 seconds, the default log level will be used
+            selectedLogLevel = await vscode.window.showQuickPick(logLevelsEnum, {
+                placeHolder: `Select log level`
+            });
+        }
+
+        errorLogString = `Log:: ${selectedLogLevel}`;
+    }
 
     editor.edit((editBuilder: TextEditorEdit) => {
-        //Get all selected text
-        const selections = editor.selections;
 
-        selections.every(selection => {
-            let selectedVar: string = document.getText(selection);
-            let selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
+        const errorLogs = configurations.errorLogs;
+        const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;
+        const defaultVariableName: string = configurations.defaultVariable.name;
+        const defaultVariableValue: string = configurations.defaultVariable.value;
+        const logOnlyFirstSelection = configurations.logOnlyFirstSelection;
+
+        const selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
+
+
+        let selectedVarString: string;
+        let selectedVar: string;
+        let position = 1;
+
+        // Change selectedVarString and selectedVar if outputbuffer is being printed.
+        if (printCurrentOutputBuffer) {
+            selectedVarString = `Output buffer`;
+            selectedVar = `ob_get_contents()`;
+            position = 0;
+        }
+
+        let newLine = ``;
+
+        let parantheseLeft = `(`;
+        let parantheseRight = `)`;
+
+        if (useEchoInstead) {
+            errorLogString = `echo`;
+            newLine = ` . "<br>"`;
+            parantheseLeft = ` `;
+            parantheseRight = ``;
+        }
+
+        let outbutbufferVariable = `$_ob`;
+
+        let getTrace = `getTrace`;
+        let print_r_start = `print_r(`;
+        let print_r_end = `, true)`;
+
+        if (!configurations.printWithCallStack.printCallStackAsArray) {
+            getTrace += `AsString`;
+            print_r_start = ``;
+            print_r_end = ``;
+        }
+
+
+        selections.forEach(selection => {
+
+            if (!printCurrentOutputBuffer) {
+                selectedVar = document.getText(selection);
+                selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
+            }
+
             let selectedLine = selection.active.line;
 
 
             //Only try to position if the use PHP Parser for positioning is true.
-            if (configurations.usePHPParserForPositioning) {
+            if (usePHPParserForPositioning) {
                 const selectionType = getSelectionType(document.fileName, selection, selectedVar, document.getText());
 
                 const selectionTypeToSelectedLine: {
@@ -54,28 +131,6 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
             const indentation = getIndentation(editor, document, selectedLine);
 
-            //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-            const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
-            const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
-            const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
-
-            let position = 1;
-
-            // Change selectedVarString and selectedVar if outputbuffer is being printed.
-            const printCurrentOutputBuffer = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump'];
-            selectedVarString = printCurrentOutputBuffer.includes(args) ? "Output buffer" : selectedVarString;
-            selectedVar = printCurrentOutputBuffer.includes(args) ? "ob_get_contents()" : selectedVar;
-            position = printCurrentOutputBuffer.includes(args) ? 0 : position;
-
-            let errorLogString = `error_log`;
-
-            if (configurations.laravelLog.useLaravelLog) {
-                errorLogString = `Log::${configurations.laravelLog.laravelLogLevel}`;
-            }
-
-            let newLine = ``;
-
-
             //Check if the braces in the selected variable are balanced
             if (!isBalanced(selectedVar)) {
                 vscode.window.showErrorMessage(`Braces in the selected value are not balanced`);
@@ -89,25 +144,14 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
             // Check if the selected variable is empty, if so, get the default selected variable
             if (selectedVar.trim().length === 0) {
-                selectedVarString = configurations.defaultVariable.name;
-                selectedVar = configurations.defaultVariable.value;
+                selectedVarString = defaultVariableName;
+                selectedVar = defaultVariableValue;
                 position = 0;
-            }
-
-            let parantheseLeft = `(`;
-            let parantheseRight = `)`;
-
-            if (useEchoInstead) {
-                errorLogString = `echo`;
-                newLine = ` . "<br>"`;
-                parantheseLeft = ` `;
-                parantheseRight = ``;
             }
 
             // let varDumpString = `\${"${selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``).replaceAll(`$`, `💲`)}"}`;
 
 
-            let outbutbufferVariable = `$_ob`;
             if (varDumpVariable) {
                 let varDumpSelectedVar = `var_dump(${selectedVar})`;
 
@@ -115,7 +159,7 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
                     let ob_start = `${indentation}ob_start();\n`;
 
-                    if (printCurrentOutputBuffer.includes(args)) {
+                    if (printCurrentOutputBuffer) {
                         varDumpSelectedVar = `var_dump(${outbutbufferVariable}=${selectedVar})`;
                         ob_start = ``;
                     }
@@ -132,7 +176,7 @@ export function runTheFunctionBasedOnShortcut(args: string) {
                 }
             }
 
-            configurations.errorLogs.forEach((errorLog: string): void => {
+            errorLogs.forEach((errorLog: string): void => {
                 //selectedVar = selectedVar.replaceAll('$$', '\$$$$$');
 
                 errorLog = errorLog.replaceAll("${selectedVarString}", selectedVarString).replaceAll("${selectedVar}", selectedVar);
@@ -165,7 +209,7 @@ export function runTheFunctionBasedOnShortcut(args: string) {
                 );
             });
 
-            if (printCurrentOutputBuffer.includes(args) && varDumpVariable) {
+            if (printCurrentOutputBuffer && varDumpVariable) {
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
                     `echo ${outbutbufferVariable}; \n`
@@ -174,24 +218,11 @@ export function runTheFunctionBasedOnShortcut(args: string) {
 
 
             if (printWithCallStack) {
-                let getTrace = `getTrace`;
-                let print_r_start = `print_r(`;
-                let print_r_end = `, true)`;
-
-                if (!configurations.printWithCallStack.printCallStackAsArray) {
-                    getTrace += `AsString`;
-                    print_r_start = ``;
-                    print_r_end = ``;
-                }
-
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
                     `${indentation}${errorLogString}${parantheseLeft}${print_r_start} (new \\Exception()) -> ${getTrace}()${newLine}${print_r_end}${parantheseRight}; \n`
                 );
             }
-
-            return !configurations.logOnlyFirstSelection;
-
         });
     });
 }
