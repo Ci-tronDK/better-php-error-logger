@@ -32,6 +32,9 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
     let errorLogString = `error_log`;
     let selectedLogLevel = laravelLog.laravelLogLevel;
 
+    let lastUseStatementLine: number;
+    const useLogStatement = `use Illuminate\\Support\\Facades\\Log;`;
+
     if (laravelLog.useLaravelLog && !useEchoInstead) {
 
         if (laravelLog.chooseLogLevel) {
@@ -46,12 +49,36 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
             selectedLogLevel = await vscode.window.showQuickPick(logLevelsEnum, {
                 placeHolder: `Select log level`
             });
+
+            if (!selectedLogLevel) {
+                return;
+            }
+        }
+
+        if (laravelLog.autoUse) {
+            //Add use in PHP file if it is not already added, insert use statement after the last use statement.
+            if (!document.getText().includes(useLogStatement)) {
+
+                const useRegex = /use\s+\S+;/g;
+                lastUseStatementLine = 0;
+
+                for (let i = 0; i < document.lineCount; i++) {
+                    const lineText = document.lineAt(i).text;
+                    if (lineText.match(useRegex)) {
+                        lastUseStatementLine = i;
+                    }
+                }
+            }
         }
 
         errorLogString = `Log:: ${selectedLogLevel}`;
     }
 
     editor.edit((editBuilder: TextEditorEdit) => {
+
+        if (lastUseStatementLine !== undefined) {
+            editBuilder.insert(new vscode.Position(lastUseStatementLine + 1, 0), useLogStatement);
+        }
 
         const errorLogs = configurations.errorLogs;
         const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;

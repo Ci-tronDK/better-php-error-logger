@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.24",
+    "version": "0.1.25",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -226,6 +226,11 @@
                             "default": false,
                             "description": "Set this to true to use the laravel log function instead of error_log"
                         },
+                        "autoUse": {
+                            "type": "boolean",
+                            "default": true,
+                            "description": "Set this to true to automatically add the use statement for the laravel log function. It will be added after the last use statement."
+                        },
                         "laravelLogLevel": {
                             "type": "string",
                             "default": "debug",
@@ -249,6 +254,7 @@
                     },
                     "default": {
                         "useLaravelLog": false,
+                        "autoUse": true,
                         "laravelLogLevel": "debug",
                         "chooseLogLevel": false
                     },

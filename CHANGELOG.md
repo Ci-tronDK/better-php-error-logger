@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.25 3/4 2023 22.20 CEST
+- Made so when user chooses Laravel log level and cancels, it will now do nothing instead of printing undefined. Made so user can choose to autoUse in settings when using Laravel's log function. Changed the README.md file to reflect these changes.
+
 Version 0.1.24 1/4 2023 15.00 CEST
 - Added some Laravel keyword to package.json. Moved some if checks outside of every/foreach loop, because it was not needed to check it every time. Changed every to foreach, so I didn't have to return and I set the selections to an array with one element (the active selection) if logOnlyFirstSelection is true instead. Made so use can choose to select Laravel log level, when using Laravel's log function.
 

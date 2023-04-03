@@ -44,6 +44,7 @@ The default values for all the settings for the extension are:
 "betterPhpErrorLogger.usePHPParserForPositioning": true,
 "betterPhpErrorLogger.laravelLog": {
     "useLaravelLog": false,
+    "autoUse": true,
     "laravelLogLevel": "debug",
     "chooseLogLevel": false
 },
@@ -70,6 +71,6 @@ For the other settings things it will use your defaults.
   
 By default the extension uses PHP Parser to try to position the error_log correctly. PHP Parser requires valid code. If you have problems with this you can set `betterPhpErrorLogger.usePHPParserForPositioning` to false. This will always log on the next line.
 
-If you want to use Laravel's log function instead of error_log, you can set `betterPhpErrorLogger.laravelLog` to an object with the property useLaravelLog set to true. You can also set the log level with the property laravelLogLevel. The default log level is debug. You can also choose to choose the log level when logging, by setting the property chooseLogLevel to true.
+If you want to use Laravel's log function instead of error_log, you can set `betterPhpErrorLogger.laravelLog` to an object with the property useLaravelLog set to true. autoUse is a setting that will write `use Illuminate\Support\Facades\Log;` after the last use statement, if it doesn't exist. The default is true. You can also set the log level with the property laravelLogLevel. The default log level is debug. You can also choose to choose the log level when logging, by setting the property chooseLogLevel to true.
 
 Now when you have selected multiple things, all will be logged. If you want to log only the first selection you can set `betterPhpErrorLogger.logOnlyFirstSelection` to true.
