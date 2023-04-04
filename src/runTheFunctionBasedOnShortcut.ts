@@ -4,6 +4,8 @@ import { symbolFinderLoop } from "./symbolFinderLoop";
 import { getIndentation } from "./getIndentation";
 import { isBalanced } from "./isBalanced";
 import { getSelectionType } from './getSelectionType';
+import { parsePHPfile } from './parsePHPfile';
+import { Program } from 'php-parser';
 
 
 export async function runTheFunctionBasedOnShortcut(args: string) {
@@ -71,13 +73,19 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
             }
         }
 
-        errorLogString = `Log:: ${selectedLogLevel}`;
+        errorLogString = `Log::${selectedLogLevel}`;
     }
 
     editor.edit((editBuilder: TextEditorEdit) => {
 
         if (lastUseStatementLine !== undefined) {
+
             editBuilder.insert(new vscode.Position(lastUseStatementLine + 1, 0), useLogStatement);
+
+            // Add a new line after the inserted use statement if line after the use statement is not empty.
+            if (!document.lineAt(lastUseStatementLine + 2).text.match(/^\s*$/)) {
+                editBuilder.insert(new vscode.Position(lastUseStatementLine + 2, 0), `\n`);
+            }
         }
 
         const errorLogs = configurations.errorLogs;
@@ -88,6 +96,13 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
         const selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
 
+        let parsedphpFile: Program | null = null;
+        if (usePHPParserForPositioning) {
+            parsedphpFile = parsePHPfile(document.fileName, document.getText());
+            if (parsedphpFile === null) {
+                return;
+            }
+        }
 
         let selectedVarString: string;
         let selectedVar: string;
@@ -136,8 +151,8 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
 
             //Only try to position if the use PHP Parser for positioning is true.
-            if (usePHPParserForPositioning) {
-                const selectionType = getSelectionType(document.fileName, selection, selectedVar, document.getText());
+            if (usePHPParserForPositioning && parsedphpFile) {
+                const selectionType = getSelectionType(selection, selectedVar, parsedphpFile);
 
                 const selectionTypeToSelectedLine: {
                     [key: string]: number;

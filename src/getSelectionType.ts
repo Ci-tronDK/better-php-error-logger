@@ -1,25 +1,11 @@
-import { Selection, TextDocument } from "vscode";
-// initialize the php parser factory class
-import fs from 'fs';
-//import path from 'path';
-import { Engine } from 'php-parser';
+import { Program } from "php-parser";
+import { Selection } from "vscode";
 
-export const getSelectionType = (file: string, selection: Selection, selectedVarName: string, phpFile: string) => {
-    // initialize a new parser instance
-    const parser = new Engine({
-        // some options :
-        parser: {
-            extractDoc: true,
-            php7: true
-        },
-        ast: {
-            withPositions: true
-        }
-    });
+
+export const getSelectionType = (selection: Selection, selectedVarName: string, parsedphpFile: Program) => {
 
     //remove first dollar sign from selected variable name
     selectedVarName = selectedVarName.replace('$', '');
-
 
     //selectedVar position line start and end
     const selectionStartLine = selection.start.line + 1;
@@ -32,9 +18,7 @@ export const getSelectionType = (file: string, selection: Selection, selectedVar
         return (startLine === selectionStartLine && startColumn === selectionStartCharacter && endLine === selectionEndLine && endColumn === selectionEndCharacter);
     }
 
-    //read currentfile with php-parser
-    //const phpFile = fs.readFileSync(file, 'utf8');
-    const parsedphpFile = parser.parseCode(phpFile, file);
+
     let selectionType = ``;
 
     //loop through all the children of the parsed php file

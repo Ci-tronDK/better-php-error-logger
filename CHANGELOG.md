@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.26 4/4 2023 18.28 CEST
+- Removed space before log level when using Laravel's log function. Added a new line after the inserted use statement if line after the use statement is not empty, when using autoUse when using Laravel's log function. Moved parsedphpFile out of getSeletionType file, which is run in the foreach loop, so it will not be run every time. Moved it to its own file and run it before the foreach loop.
+
 Version 0.1.25 3/4 2023 22.20 CEST
 - Made so when user chooses Laravel log level and cancels, it will now do nothing instead of printing undefined. Made so user can choose to autoUse in settings when using Laravel's log function. Changed the README.md file to reflect these changes.
 

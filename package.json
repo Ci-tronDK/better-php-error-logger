@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.25",
+    "version": "0.1.26",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -44,7 +44,7 @@
         "laravel log level"
     ],
     "activationEvents": [],
-    "main": "./out/main.js",
+    "main": "./built/extension.js",
     "contributes": {
         "commands": [
             {
