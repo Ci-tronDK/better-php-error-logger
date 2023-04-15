@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.33 15/4 2023 23.00 CEST
+- Forgot to update the readme with the new updates to the extension. So I did that now.
+
 Version 0.1.32 15/4 2023 22.45 CEST
 - Made so use can choose between var_dump and var_export in settings. Also made so user can choose between \<br> and \<pre> when using echo. Because I changed how settings worked, if a user has used the old way a message will be shown and asked to read the readme for changes. Added some keywords to package.json. I have updated the README.md file to reflect some of these changes.
 

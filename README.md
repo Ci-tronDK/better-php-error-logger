@@ -45,8 +45,14 @@ The default values for all the settings for the extension are:
     "printWithCallStack": false,
     "printCallStackAsArray": false
 },
-"betterPhpErrorLogger.varDumpVariable": false,
-"betterPhpErrorLogger.useEchoInstead": false,
+"betterPhpErrorLogger.varDumpExportVariable": {
+    "varDumpExportVariable": false,
+    "dumpOrExport": "var_export"
+},
+"betterPhpErrorLogger.useEchoInstead": {
+    "useEchoInstead": false,
+    "preOrBr": "pre"
+},               
 "betterPhpErrorLogger.usePHPParserForPositioning": true,
 "betterPhpErrorLogger.laravelLog": {
     "useLaravelLog": false,
@@ -69,8 +75,8 @@ You can use a default name when no variable is selected, change `betterPhpErrorL
 You can change some settings to always use them when using the default shotcut `Ctrl + Alt + D`.
 
 Set `betterPhpErrorLogger.printWithCallStack` to an object with the property printWithCallStack set to true to also print call stack. You can also choose to print the call stack as an array, if you set the property printCallStackAsArray as array to true.  
-Set `betterPhpErrorLogger.useEchoInstead` to true to echo instead of error_log.  
-Set `betterPhpErrorLogger.varDumpVariable` to true to var_dump variable.
+Set `betterPhpErrorLogger.useEchoInstead` to an object with the property useEchoInstead set to true to use echo instead of error_log. You can also choose between using pre or br tags, by setting the property preOrBr to pre or br.
+Set `betterPhpErrorLogger.varDumpExportVariable` to an object with the property varDumpExportVariable set to true to var_dump or export the variable. Set the property dumpOrExport to var_dump or var_export to choose what to use.
 
 If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.
 For the other settings things it will use your defaults.
