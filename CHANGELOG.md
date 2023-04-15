@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.32 15/4 2023 22.45 CEST
+- Made so use can choose between var_dump and var_export in settings. Also made so user can choose between \<br> and \<pre> when using echo. Because I changed how settings worked, if a user has used the old way a message will be shown and asked to read the readme for changes. Added some keywords to package.json. I have updated the README.md file to reflect some of these changes.
+
 Version 0.1.30 15/4 2023 15.05 CEST
 - Changed my launch.json and task.json to both compile typescipt and run esbuild when I launch the extension. Made when clauses for shorcuts, so the only run when the language is PHP, and the texteditor has focus and is not readonly. Moved PHP parsing before choosing Laravel log, so it will write an error before asking for Laravel log level. Added a new shortcut, which will always var_dump, but will do the opposite of useEcho in the settings. Refactored some code for commands, so it is an a loop. Made so user can use quickpick to select instead of using a shortcut. Updated README.md to reflect these changes.
 

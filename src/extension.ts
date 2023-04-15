@@ -20,13 +20,13 @@ function activate(context: { subscriptions: Disposable[]; }): void {
     const runTheFunctionBasedOnShortcutCommands = [
         "errorLog",
         "printWithCallStack",
-        "varDumpVariable",
-        "varDumpVariableAlternative",
+        "varDumpExportVariable",
+        "varDumpExportVariableAlternative",
         "useEchoInstead",
         "printCurrentOutputBuffer",
         "printCurrentOutputBufferWithCallStack",
-        "printCurrentOutputBufferVarDump",
-        "printCurrentOutputBufferVarDumpAlternative",
+        "printCurrentOutputBufferVarDumpExport",
+        "printCurrentOutputBufferVarDumpExportAlternative",
         "printCurrentOutputBufferUseEcho"
     ];
 

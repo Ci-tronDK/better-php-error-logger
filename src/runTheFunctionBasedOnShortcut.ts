@@ -21,17 +21,30 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
-    //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-    let useEchoInstead: boolean = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
-    const printWithCallStack: boolean = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
-    let varDumpVariable: boolean = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
+    // If configurations.varDumpVariable is set, show error message and return
+    if (configurations.varDumpVariable) {
+        vscode.window.showErrorMessage(`I have changed "betterPhpErrorLogger.varDumpVariable" to an object called "betterPhpErrorLogger.varDumpExportVariable". See the README.md for more information.`);
+        return;
+    }
 
-    if (args === `varDumpVariableAlternative` || args === 'printCurrentOutputBufferVarDumpAlternative') {
-        varDumpVariable = true;
+    if (typeof configurations.useEchoInstead !== 'object') {
+        vscode.window.showErrorMessage(`I have changed "betterPhpErrorLogger.useEchoInstead" to an object. See the README.md for more information.`);
+        return;
+    }
+
+    //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
+    let useEchoInstead: boolean = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead.useEchoInstead : configurations.useEchoInstead.useEchoInstead;
+    const printWithCallStack: boolean = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
+    let varDumpExportVariable: boolean = (args === `varDumpExportVariable` || args === 'printCurrentOutputBufferVarDumpExport') ? !configurations.varDumpExportVariable.varDumpExportVariable : configurations.varDumpExportVariable.varDumpExportVariable;
+    const dumpOrExport: string = configurations.varDumpExportVariable.dumpOrExport;
+    const preOrBr: string = configurations.useEchoInstead.preOrBr;
+
+    if (args === `varDumpExportVariableAlternative` || args === 'printCurrentOutputBufferVarDumpExportAlternative') {
+        varDumpExportVariable = true;
         useEchoInstead = !useEchoInstead;
     }
 
-    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump', 'printCurrentOutputBufferVarDumpAlternative'];
+    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDumpExport', 'printCurrentOutputBufferVarDumpExportAlternative'];
     const printCurrentOutputBuffer = printCurrentOutputBufferArray.includes(args);
     const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;
     const laravelLog = configurations.laravelLog;
@@ -125,11 +138,20 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
         let parantheseLeft = `(`;
         let parantheseRight = `)`;
 
+        let beforeEchos = ``;
+        let afterEchos = ``;
+
         if (useEchoInstead) {
             errorLogString = `echo`;
-            newLine = ` . "<br>"`;
             parantheseLeft = ` `;
             parantheseRight = ``;
+
+            if (preOrBr === `br`) {
+                newLine = ` . "<br>"`;
+            } else {
+                beforeEchos = `echo "<pre>";\n`;
+                afterEchos = `echo "</pre>";\n`;
+            }
         }
 
         let outbutbufferVariable = `$_ob`;
@@ -196,39 +218,50 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
                 position = 0;
             }
 
-            // let varDumpString = `\${"${selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``).replaceAll(`$`, `💲`)}"}`;
+            // let varDumpExportString = `\${"${selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``).replaceAll(`$`, `💲`)}"}`;
 
 
-            if (varDumpVariable) {
-                let varDumpSelectedVar = `var_dump(${selectedVar})`;
+            if (varDumpExportVariable) {
+                let varDumpExportSelectedVar = `${dumpOrExport}(${selectedVar})`;
+
 
                 if (!useEchoInstead) {
+                    if (dumpOrExport === 'var_export') {
+                        // Remove the last paranthese from varDumpExportSelectedVar and add  `), true)`
+                        selectedVar = varDumpExportSelectedVar.slice(0, -1) + `, true)`;
 
-                    let ob_start = `${indentation}ob_start();\n`;
+                    } else {
 
-                    if (printCurrentOutputBuffer) {
-                        varDumpSelectedVar = `var_dump(${outbutbufferVariable}=${selectedVar})`;
-                        ob_start = ``;
+                        let ob_start = `${indentation}ob_start();\n`;
+
+                        if (printCurrentOutputBuffer) {
+                            varDumpExportSelectedVar = `${dumpOrExport}(${outbutbufferVariable}=${selectedVar})`;
+                            ob_start = ``;
+                        }
+                        // let varDumpExportNewVar = `$var_dump`;
+                        editBuilder.insert(
+                            new vscode.Position(selectedLine + position, 0),
+                            `${ob_start}${indentation}${varDumpExportSelectedVar};\n`
+                            //+
+                            // `${indentation}${varDumpExportNewVar} = rtrim(ob_get_clean()); \n`
+                        );
+                        selectedVar = 'rtrim(ob_get_clean())';
                     }
-                    // let varDumpNewVar = `$var_dump`;
-                    editBuilder.insert(
-                        new vscode.Position(selectedLine + position, 0),
-                        `${ob_start}${indentation}${varDumpSelectedVar};\n`
-                        //+
-                        // `${indentation}${varDumpNewVar} = rtrim(ob_get_clean()); \n`
-                    );
-                    selectedVar = 'rtrim(ob_get_clean())';
                 } else {
-                    selectedVar = varDumpSelectedVar;
+                    selectedVar = varDumpExportSelectedVar;
                 }
             }
+
+            editBuilder.insert(
+                new vscode.Position(selectedLine + position, 0), `${indentation}${beforeEchos}`
+            );
 
             errorLogs.forEach((errorLog: string): void => {
                 //selectedVar = selectedVar.replaceAll('$$', '\$$$$$');
 
                 errorLog = errorLog.replaceAll("${selectedVarString}", selectedVarString).replaceAll("${selectedVar}", selectedVar);
 
-                if (varDumpVariable && useEchoInstead) {
+                if (varDumpExportVariable && useEchoInstead) {
 
                     //Get index of all selecedVAr
                     let selectedVarIndexes = [];
@@ -256,20 +289,24 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
                 );
             });
 
-            if (printCurrentOutputBuffer && varDumpVariable) {
-                editBuilder.insert(
-                    new vscode.Position(selectedLine + position, 0),
-                    `echo ${outbutbufferVariable}; \n`
-                );
-            }
-
-
             if (printWithCallStack) {
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
                     `${indentation}${errorLogString}${parantheseLeft}${print_r_start} (new \\Exception()) -> ${getTrace}()${newLine}${print_r_end}${parantheseRight}; \n`
                 );
             }
+
+            editBuilder.insert(
+                new vscode.Position(selectedLine + position, 0), `${indentation}${afterEchos}`
+            );
+
+            if (printCurrentOutputBuffer && varDumpExportVariable && dumpOrExport === 'var_dump') {
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + position, 0),
+                    `echo ${outbutbufferVariable}; \n`
+                );
+            }
+
         });
     });
 }

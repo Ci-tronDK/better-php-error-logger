@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.30",
+    "version": "0.1.32",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -30,9 +30,13 @@
         "better",
         "var_dump",
         "var dump",
+        "var_export",
+        "var export",
         "call stack",
         "stack trace",
         "echo error",
+        "br",
+        "pre",
         "log error",
         "log error message",
         "line number",
@@ -43,7 +47,8 @@
         "laravel debug",
         "laravel log level"
     ],
-    "main": "./built/extension.js",
+    "main": "./out/main.js",
+    "activationEvents": [],
     "contributes": {
         "commands": [
             {
@@ -55,12 +60,12 @@
                 "title": "Call stack"
             },
             {
-                "command": "extension.betterPhpErrorLogger.varDumpVariable",
-                "title": "Var dump variable"
+                "command": "extension.betterPhpErrorLogger.varDumpExportVariable",
+                "title": "Var dump or var export variable"
             },
             {
-                "command": "extension.betterPhpErrorLogger.varDumpVariableAlternative",
-                "title": "Var dump variable alternative"
+                "command": "extension.betterPhpErrorLogger.varDumpExportVariableAlternative",
+                "title": "Var dump or var export variable alternative"
             },
             {
                 "command": "extension.betterPhpErrorLogger.useEchoInstead",
@@ -79,12 +84,12 @@
                 "title": "Get current output buffer with call stack"
             },
             {
-                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
-                "title": "Get current output buffer, var dump"
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpExport",
+                "title": "Get current output buffer, var dump or var export"
             },
             {
-                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpAlternative",
-                "title": "Get current output buffer, var dump alternative"
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpExportAlternative",
+                "title": "Get current output buffer, var dump or var export alternative"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
@@ -111,18 +116,18 @@
                 "args": "printWithCallStack"
             },
             {
-                "command": "extension.betterPhpErrorLogger.varDumpVariable",
+                "command": "extension.betterPhpErrorLogger.varDumpExportVariable",
                 "key": "ctrl+alt+v",
                 "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+v",
-                "args": "varDumpVariable"
+                "args": "varDumpExportVariable"
             },
             {
-                "command": "extension.betterPhpErrorLogger.varDumpVariableAlternative",
+                "command": "extension.betterPhpErrorLogger.varDumpExportVariableAlternative",
                 "key": "ctrl+alt+w",
                 "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+w",
-                "args": "varDumpVariableAlternative"
+                "args": "varDumpExportVariableAlternative"
             },
             {
                 "command": "extension.betterPhpErrorLogger.useEchoInstead",
@@ -152,18 +157,18 @@
                 "args": "printCurrentOutputBufferWithCallStack"
             },
             {
-                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpExport",
                 "key": "ctrl+alt+o v",
                 "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o v",
-                "args": "printCurrentOutputBufferVarDump"
+                "args": "printCurrentOutputBufferVarDumpExport"
             },
             {
-                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpAlternative",
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpExportAlternative",
                 "key": "ctrl+alt+o w",
                 "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o w",
-                "args": "printCurrentOutputBufferVarDumpAlternative"
+                "args": "printCurrentOutputBufferVarDumpExportAlternative"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
@@ -217,17 +222,57 @@
                     "description": "Set this to true to also print call stack and set printCallStackAsArray to true to print call stack as array",
                     "additionalProperties": false
                 },
-                "betterPhpErrorLogger.varDumpVariable": {
-                    "type": "boolean",
-                    "title": "Var dump variable",
-                    "description": "Set this to true to var_dump the selected variable",
-                    "default": false
+                "betterPhpErrorLogger.varDumpExportVariable": {
+                    "type": "object",
+                    "title": "Var dump or export variable",
+                    "properties": {
+                        "varDumpExportVariable": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to var_dump or var_export the selected variable"
+                        },
+                        "dumpOrExport": {
+                            "enum": [
+                                "var_dump",
+                                "var_export"
+                            ],
+                            "type": "string",
+                            "default": "var_export",
+                            "description": "Set this to var_dump or var_export"
+                        }
+                    },
+                    "description": "Set this to true to var_dump or export the selected variable",
+                    "default": {
+                        "varDumpExportVariable": false,
+                        "dumpOrExport": "var_export"
+                    },
+                    "additionalProperties": false
                 },
                 "betterPhpErrorLogger.useEchoInstead": {
-                    "type": "boolean",
+                    "type": "object",
                     "title": "Use echo instead",
-                    "default": false,
-                    "description": "Set this to true to use echo instead of error_log"
+                    "properties": {
+                        "useEchoInstead": {
+                            "type": "boolean",
+                            "default": false,
+                            "description": "Set this to true to use echo instead of error_log"
+                        },
+                        "preOrBr": {
+                            "enum": [
+                                "pre",
+                                "br"
+                            ],
+                            "type": "string",
+                            "default": "pre",
+                            "description": "Set this to pre or br"
+                        }
+                    },
+                    "description": "Set this to true to use echo instead of error_log, choose pre or br",
+                    "default": {
+                        "useEchoInstead": false,
+                        "preOrBr": "pre"
+                    },
+                    "additionalProperties": false
                 },
                 "betterPhpErrorLogger.defaultVariable": {
                     "type": "object",
