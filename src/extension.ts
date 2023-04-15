@@ -14,84 +14,77 @@ import { runTheFunctionBasedOnShortcut } from './runTheFunctionBasedOnShortcut';
  * @param {vscode.ExtensionContext} context
  */
 function activate(context: { subscriptions: Disposable[]; }): void {
-    const errorLog: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger", (args: string): void => {
-        if (args === undefined) {
-            args = "";
-        }
 
-        runTheFunctionBasedOnShortcut(args);
+    const allCommands: Disposable[] = [];
+
+    const runTheFunctionBasedOnShortcutCommands = [
+        "errorLog",
+        "printWithCallStack",
+        "varDumpVariable",
+        "varDumpVariableAlternative",
+        "useEchoInstead",
+        "printCurrentOutputBuffer",
+        "printCurrentOutputBufferWithCallStack",
+        "printCurrentOutputBufferVarDump",
+        "printCurrentOutputBufferVarDumpAlternative",
+        "printCurrentOutputBufferUseEcho"
+    ];
+
+    runTheFunctionBasedOnShortcutCommands.forEach((commandName: string) => {
+        const command: Disposable = vscode.commands.registerCommand(`extension.betterPhpErrorLogger.${commandName}`, (args: string): void => {
+
+            if (args === undefined) {
+                args = commandName;
+            }
+
+            runTheFunctionBasedOnShortcut(args);
+        });
+
+        allCommands.push(command);
+
     });
 
-    const printWithCallStack: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printWithCallStack", (args: string): void => {
-        if (args === undefined) {
-            args = "printWithCallStack";
-        }
-
-        runTheFunctionBasedOnShortcut(args);
-    });
-
-    const varDumpVariable: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.varDumpVariable", (args: string): void => {
-        if (args === undefined) {
-            args = "varDumpVariable";
-        }
-
-        runTheFunctionBasedOnShortcut(args);
-    });
-
-    const useEchoInstead: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.useEchoInstead", (args: string): void => {
-        if (args === undefined) {
-            args = "useEchoInstead";
-        }
-
-        runTheFunctionBasedOnShortcut(args);
-    });
-
-    const deleteErrorLogs: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.deleteErrorLogs", (): void => {
+    const deleteErrorLogs: Disposable = vscode.commands.registerCommand(`extension.betterPhpErrorLogger.deleteErrorLogs`, (): void => {
         deleteError_logs();
     });
 
-    const printCurrentOutputBuffer: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBuffer", (args: string): void => {
-        if (args === undefined) {
-            args = "printCurrentOutputBuffer";
-        }
+    allCommands.push(deleteErrorLogs);
 
-        runTheFunctionBasedOnShortcut(args);
+    const quickPick: Disposable = vscode.commands.registerCommand(`extension.betterPhpErrorLogger.quickPick`, async (): Promise<void> => {
+
+        const items = [...runTheFunctionBasedOnShortcutCommands, "deleteErrorLogs"];
+
+        const packagejson = require('../package.json');
+
+        //Get title of all commands
+        const quickPickItems = items.map((commandName: string) => {
+            return {
+                label: packagejson.contributes.commands.find((command: { command: string; title: string; }) => command.command === `extension.betterPhpErrorLogger.${commandName}`).title,
+                description: `Default shortcut: ${packagejson.contributes.keybindings.find((keybinding: { command: string; key: string; }) => keybinding.command === `extension.betterPhpErrorLogger.${commandName}`).key}`,
+                command: commandName
+            };
+        });
+
+        //Sort by label alphabetically
+        quickPickItems.sort((a, b) => (a.label < b.label) ? -1 : ((a.label > b.label) ? 1 : 0));
+
+        const quickPickItem = await vscode.window.showQuickPick(quickPickItems, {
+            placeHolder: "Select a command",
+        });
+
+        if (quickPickItem) {
+            if (runTheFunctionBasedOnShortcutCommands.includes(quickPickItem.command)) {
+                runTheFunctionBasedOnShortcut(quickPickItem.command);
+            } else if (quickPickItem.command === "deleteErrorLogs") {
+                deleteError_logs();
+            }
+        }
     });
 
-    const printCurrentOutputBufferAndCallStack: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack", (args: string): void => {
-        if (args === undefined) {
-            args = "printCurrentOutputBufferWithCallStack";
-        }
+    allCommands.push(quickPick);
 
-        runTheFunctionBasedOnShortcut(args);
-    });
 
-    const printCurrentOutputBufferVarDump: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump", (args: string): void => {
-        if (args === undefined) {
-            args = "printCurrentOutputBufferVarDump";
-        }
-
-        runTheFunctionBasedOnShortcut(args);
-    });
-
-    const printCurrentOutputBufferUseEcho: Disposable = vscode.commands.registerCommand("extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho", (args: string): void => {
-
-        if (args === undefined) {
-            args = "printCurrentOutputBufferUseEcho";
-        }
-
-        runTheFunctionBasedOnShortcut(args);
-    });
-
-    context.subscriptions.push(errorLog);
-    context.subscriptions.push(printWithCallStack);
-    context.subscriptions.push(varDumpVariable);
-    context.subscriptions.push(useEchoInstead);
-    context.subscriptions.push(deleteErrorLogs);
-    context.subscriptions.push(printCurrentOutputBuffer);
-    context.subscriptions.push(printCurrentOutputBufferAndCallStack);
-    context.subscriptions.push(printCurrentOutputBufferVarDump);
-    context.subscriptions.push(printCurrentOutputBufferUseEcho);
+    context.subscriptions.push(...allCommands);
 
 }
 

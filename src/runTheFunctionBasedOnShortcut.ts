@@ -22,14 +22,27 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-    const useEchoInstead: string = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
-    const printWithCallStack: string = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
-    const varDumpVariable: string = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
+    let useEchoInstead: boolean = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead : configurations.useEchoInstead;
+    const printWithCallStack: boolean = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
+    let varDumpVariable: boolean = (args === `varDumpVariable` || args === 'printCurrentOutputBufferVarDump') ? !configurations.varDumpVariable : configurations.varDumpVariable;
 
-    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump'];
+    if (args === `varDumpVariableAlternative` || args === 'printCurrentOutputBufferVarDumpAlternative') {
+        varDumpVariable = true;
+        useEchoInstead = !useEchoInstead;
+    }
+
+    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDump', 'printCurrentOutputBufferVarDumpAlternative'];
     const printCurrentOutputBuffer = printCurrentOutputBufferArray.includes(args);
-
+    const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;
     const laravelLog = configurations.laravelLog;
+
+    let parsedphpFile: Program | null = null;
+    if (usePHPParserForPositioning) {
+        parsedphpFile = parsePHPfile(document.fileName, document.getText());
+        if (parsedphpFile === null) {
+            return;
+        }
+    }
 
     let errorLogString = `error_log`;
     let selectedLogLevel = laravelLog.laravelLogLevel;
@@ -89,20 +102,12 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
         }
 
         const errorLogs = configurations.errorLogs;
-        const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;
+
         const defaultVariableName: string = configurations.defaultVariable.name;
         const defaultVariableValue: string = configurations.defaultVariable.value;
         const logOnlyFirstSelection = configurations.logOnlyFirstSelection;
 
         const selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
-
-        let parsedphpFile: Program | null = null;
-        if (usePHPParserForPositioning) {
-            parsedphpFile = parsePHPfile(document.fileName, document.getText());
-            if (parsedphpFile === null) {
-                return;
-            }
-        }
 
         let selectedVarString: string;
         let selectedVar: string;

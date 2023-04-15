@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.30 15/4 2023 15.05 CEST
+- Changed my launch.json and task.json to both compile typescipt and run esbuild when I launch the extension. Made when clauses for shorcuts, so the only run when the language is PHP, and the texteditor has focus and is not readonly. Moved PHP parsing before choosing Laravel log, so it will write an error before asking for Laravel log level. Added a new shortcut, which will always var_dump, but will do the opposite of useEcho in the settings. Refactored some code for commands, so it is an a loop. Made so user can use quickpick to select instead of using a shortcut. Updated README.md to reflect these changes.
+
 Version 0.1.26 4/4 2023 18.28 CEST
 - Removed space before log level when using Laravel's log function. Added a new line after the inserted use statement if line after the use statement is not empty, when using autoUse when using Laravel's log function. Moved parsedphpFile out of getSeletionType file, which is run in the foreach loop, so it will not be run every time. Moved it to its own file and run it before the foreach loop.
 

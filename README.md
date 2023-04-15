@@ -10,17 +10,23 @@ Here is a list of shotcuts you can use.
 | `Ctrl + Alt + D`   | To to error log when a variable is selected. 	                                                               | D for Default. 	                 |
 | `Ctrl + Alt + C`   | To also print call stack. (No Call Stack, when it is true for default in settings)                              | C for Call Stack.                       | 
 | `Ctrl + Alt + V`   | To var_dump variable. (No Var dump, when it is true for default in settings)                                    | V for var_dump.                         |
+| `Ctrl + Alt + W`   | To var_dump variable. (Will always var_dump, but do the oppsite of useEcho in settings)                         | W also for var_dump. :)                 |
 | `Ctrl + Alt + E`   | To use Echo instead.  (No Use Echo instead, when it is true for default in settings)                            | E for Echo.                             |
 | `Ctrl + Alt + O D` | To print current output buffer with default settings.                                                           | O for Output buffer.                    |
 | `Ctrl + Alt + O C` | To print current output buffer with call stack. (No Call Stack, when it is true for default in settings)        |                                         | 
 | `Ctrl + Alt + O V` | To print current output buffer with var dumped variable. (No Var dump, when it is true for default in settings) |                                         |
+| `Ctrl + Alt + O W` | To print current output buffer with var dumped variable. (Will always var_dump, but do the oppsite of useEcho in settings) |                              |
 | `Ctrl + Alt + O E` | To echo current output buffer. (No Use Echo instead, when it is true for default in settings)                   |                                         |    
 | `Ctrl + Alt + X`   | To delete all error_logs and var_dumps inside a file.                   * Deletion may not work correctly.      | X for when something is crossed over :) |
+| `Ctrl + Alt + Q`   | If you can't remember all shortcuts, you can use this shortcut to quickpick one of the commands above.          | Q for quickpick.                        |
+
 
 
 * Note: Sometimes I change how things work in settings, so the extension may not work correctly. But if you delete the settings for the extension it should work again. You can than read the readme for the new way to do the same.
 
 You can change the keyboard shortcuts in VS Code shortcut settings. 
+
+If you can't remember all the shortcuts, you can use the shortcut `Ctrl + Alt + Q` to quickpick one of the commands above.
 
 In VS Code settings or `settings.json`, you can change some settings.
 

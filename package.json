@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.26",
+    "version": "0.1.30",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -43,12 +43,11 @@
         "laravel debug",
         "laravel log level"
     ],
-    "activationEvents": [],
     "main": "./built/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "extension.betterPhpErrorLogger",
+                "command": "extension.betterPhpErrorLogger.errorLog",
                 "title": "Error log"
             },
             {
@@ -58,6 +57,10 @@
             {
                 "command": "extension.betterPhpErrorLogger.varDumpVariable",
                 "title": "Var dump variable"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.varDumpVariableAlternative",
+                "title": "Var dump variable alternative"
             },
             {
                 "command": "extension.betterPhpErrorLogger.useEchoInstead",
@@ -80,63 +83,100 @@
                 "title": "Get current output buffer, var dump"
             },
             {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpAlternative",
+                "title": "Get current output buffer, var dump alternative"
+            },
+            {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
                 "title": "Get current output buffer, use echo"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.quickPick",
+                "title": "Quick pick"
             }
         ],
         "keybindings": [
             {
-                "command": "extension.betterPhpErrorLogger",
+                "command": "extension.betterPhpErrorLogger.errorLog",
                 "key": "ctrl+alt+d",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+d",
-                "args": ""
+                "args": "errorLog"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printWithCallStack",
                 "key": "ctrl+alt+c",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+c",
                 "args": "printWithCallStack"
             },
             {
                 "command": "extension.betterPhpErrorLogger.varDumpVariable",
                 "key": "ctrl+alt+v",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+v",
                 "args": "varDumpVariable"
             },
             {
+                "command": "extension.betterPhpErrorLogger.varDumpVariableAlternative",
+                "key": "ctrl+alt+w",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
+                "mac": "ctrl+alt+w",
+                "args": "varDumpVariableAlternative"
+            },
+            {
                 "command": "extension.betterPhpErrorLogger.useEchoInstead",
                 "key": "ctrl+alt+e",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+e",
                 "args": "useEchoInstead"
             },
             {
                 "command": "extension.betterPhpErrorLogger.deleteErrorLogs",
                 "key": "ctrl+alt+x",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+x"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBuffer",
                 "key": "ctrl+alt+o d",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o d",
                 "args": "printCurrentOutputBuffer"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferWithCallStack",
                 "key": "ctrl+alt+o c",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o c",
                 "args": "printCurrentOutputBufferWithCallStack"
             },
             {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDump",
                 "key": "ctrl+alt+o v",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o v",
                 "args": "printCurrentOutputBufferVarDump"
             },
             {
+                "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferVarDumpAlternative",
+                "key": "ctrl+alt+o w",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
+                "mac": "ctrl+alt+o w",
+                "args": "printCurrentOutputBufferVarDumpAlternative"
+            },
+            {
                 "command": "extension.betterPhpErrorLogger.printCurrentOutputBufferUseEcho",
                 "key": "ctrl+alt+o e",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+o e",
                 "args": "printCurrentOutputBufferUseEcho"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.quickPick",
+                "key": "ctrl+alt+q",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
+                "mac": "ctrl+alt+q"
             }
         ],
         "configuration": {
