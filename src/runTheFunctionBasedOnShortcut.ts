@@ -119,12 +119,33 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
         const defaultVariableName: string = configurations.defaultVariable.name;
         const defaultVariableValue: string = configurations.defaultVariable.value;
         const logOnlyFirstSelection = configurations.logOnlyFirstSelection;
+        const logMultipleAsArray = args === `logMultipleAsArray`;
 
-        const selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
+        let selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
 
         let selectedVarString: string;
         let selectedVar: string;
         let position = 1;
+
+        if (logMultipleAsArray) {
+
+            // If no selection is made or all selections are empty, write info message and return.
+            if (selections.length === 0 || selections.every(selection => document.getText(selection).trim().length === 0)) {
+                vscode.window.showInformationMessage(`You have to select at least one variable to log when using "Log multiple as array"`);
+                return;
+            }
+
+            //Get text for each selection and add it to an array.
+            const seletedVariablesString = selections.map(selection => document.getText(selection));
+            selectedVarString = `${selections.length} variables selected: ${seletedVariablesString.join(', ')}`;
+
+            //Add quotes around each variable and join them with a comma.
+            const seletedVariables = seletedVariablesString.map(selection => `'${selection.replace('$', '')}'`);
+            selectedVar = `compact(${seletedVariables.join(', ')})`;
+
+            // Set selections to only the last selection.
+            selections = [selections[selections.length - 1]];
+        }
 
         // Change selectedVarString and selectedVar if outputbuffer is being printed.
         if (printCurrentOutputBuffer) {
@@ -169,7 +190,7 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
         selections.forEach(selection => {
 
-            if (!printCurrentOutputBuffer) {
+            if (!printCurrentOutputBuffer && !logMultipleAsArray) {
                 selectedVar = document.getText(selection);
                 selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
             }

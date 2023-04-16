@@ -3,7 +3,7 @@
     "displayName": "Better PHP Error Logger",
     "description": "A PHP error logger with customization options",
     "icon": "images/better-php-error-logger.png",
-    "version": "0.1.33",
+    "version": "0.1.34",
     "publisher": "martinvz",
     "engines": {
         "vscode": "^1.66.0"
@@ -98,6 +98,10 @@
             {
                 "command": "extension.betterPhpErrorLogger.quickPick",
                 "title": "Quick pick"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.logMultipleAsArray",
+                "title": "Log multiple as array"
             }
         ],
         "keybindings": [
@@ -182,6 +186,12 @@
                 "key": "ctrl+alt+q",
                 "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
                 "mac": "ctrl+alt+q"
+            },
+            {
+                "command": "extension.betterPhpErrorLogger.logMultipleAsArray",
+                "key": "ctrl+alt+a",
+                "when": "editorLangId=='php' && editorTextFocus && !editorReadonly",
+                "mac": "ctrl+alt+a"
             }
         ],
         "configuration": {

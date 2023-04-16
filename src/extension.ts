@@ -27,7 +27,8 @@ function activate(context: { subscriptions: Disposable[]; }): void {
         "printCurrentOutputBufferWithCallStack",
         "printCurrentOutputBufferVarDumpExport",
         "printCurrentOutputBufferVarDumpExportAlternative",
-        "printCurrentOutputBufferUseEcho"
+        "printCurrentOutputBufferUseEcho",
+        "logMultipleAsArray"
     ];
 
     runTheFunctionBasedOnShortcutCommands.forEach((commandName: string) => {

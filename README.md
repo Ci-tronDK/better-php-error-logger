@@ -3,7 +3,7 @@
 Download it [here](https://marketplace.visualstudio.com/items?itemName=martinvz.better-php-error-logger)!
 
 With this extension you can use the error_log function in PHP with keyboard shortcuts. There are some customization options.
-Here is a list of shotcuts you can use. 
+Here is a list of shortcuts you can use. 
 
 | Shortcuts 	     | Description                               	                                                               |  Why                                    |
 |------------------- |---------------------------------------------------------------------------------------------------------------- |---------------------------------------- |
@@ -12,6 +12,7 @@ Here is a list of shotcuts you can use.
 | `Ctrl + Alt + V`   | To var_dump variable. (No Var dump, when it is true for default in settings)                                    | V for var_dump.                         |
 | `Ctrl + Alt + W`   | To var_dump variable. (Will always var_dump, but do the oppsite of useEcho in settings)                         | W also for var_dump. :)                 |
 | `Ctrl + Alt + E`   | To use Echo instead.  (No Use Echo instead, when it is true for default in settings)                            | E for Echo.                             |
+| `Ctrl + Alt + A`   | Log multiple variables as array using PHP's compact function. This will use the default settings. You can also use one of the other shortcuts to log multiple selections without using compact.                         | A for Array.                             |
 | `Ctrl + Alt + O D` | To print current output buffer with default settings.                                                           | O for Output buffer.                    |
 | `Ctrl + Alt + O C` | To print current output buffer with call stack. (No Call Stack, when it is true for default in settings)        |                                         | 
 | `Ctrl + Alt + O V` | To print current output buffer with var dumped variable. (No Var dump, when it is true for default in settings) |                                         |
@@ -72,7 +73,7 @@ The exception is when var_dumping variable:
 
 You can use a default name when no variable is selected, change `betterPhpErrorLogger.defaultVariable` to do that. `${selectedVarString}` will be changed to the name and `${selectedVar}` will be the value.
 
-You can change some settings to always use them when using the default shotcut `Ctrl + Alt + D`.
+You can change some settings to always use them when using the default shortcut `Ctrl + Alt + D`.
 
 Set `betterPhpErrorLogger.printWithCallStack` to an object with the property printWithCallStack set to true to also print call stack. You can also choose to print the call stack as an array, if you set the property printCallStackAsArray as array to true.  
 Set `betterPhpErrorLogger.useEchoInstead` to an object with the property useEchoInstead set to true to use echo instead of error_log. You can also choose between using pre or br tags, by setting the property preOrBr to pre or br.

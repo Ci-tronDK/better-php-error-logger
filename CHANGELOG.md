@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.34 16/4 2023 13.00 CEST
+- Made a new shortcut, which will log selected variables as an array using PHP's compact function. Added a very small change to delete error_logs and looked a little into regex. Updated README.md to reflect that I made a new shortcut.
+
 Version 0.1.33 15/4 2023 23.00 CEST
 - Forgot to update the readme with the new updates to the extension. So I did that now.
 

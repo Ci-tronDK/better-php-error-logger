@@ -36,6 +36,7 @@ export function deleteError_logs() {
     if (text.includes("var_dump")) {
         newText = newText.replace(/\r?\n?\bob_start\b\s*\(\s*\)\s*\;\s*\bvar_dump\b\s*\(.*\s*\$\bvar_dump_variable\b\s*\=\s*\brtrim\b\s*\(\s*\bob_get_clean\b\(\s*\)\s*\)\s*\;\n?/g, ``);
         newText = newText.replace(/\bvar_dump\b\s*\(.*?(?=;)\;\r?\n?/g, ``);
+        newText = newText.replace(`echo $_ob; `, ``);
     }
 
     // if (text.includes("echo")) {
