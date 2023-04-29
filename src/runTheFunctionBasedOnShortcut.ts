@@ -7,8 +7,7 @@ import { getSelectionType } from './getSelectionType';
 import { parsePHPfile } from './parsePHPfile';
 import { Program } from 'php-parser';
 
-
-export async function runTheFunctionBasedOnShortcut(args: string) {
+export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: any): Promise<void> {
     const editor: TextEditor | undefined = vscode.window.activeTextEditor;
     if (!editor) {
         return;
@@ -21,30 +20,13 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
     const configurations = vscode.workspace.getConfiguration('betterPhpErrorLogger');
 
-    // If configurations.varDumpVariable is set, show error message and return
-    if (configurations.varDumpVariable) {
-        vscode.window.showErrorMessage(`I have changed "betterPhpErrorLogger.varDumpVariable" to an object called "betterPhpErrorLogger.varDumpExportVariable". See the README.md for more information.`);
-        return;
-    }
-
-    if (typeof configurations.useEchoInstead !== 'object') {
-        vscode.window.showErrorMessage(`I have changed "betterPhpErrorLogger.useEchoInstead" to an object. See the README.md for more information.`);
-        return;
-    }
-
     //Check if the keyboard args are set and and get the opposite of settings if they are set else use settings from configuration
-    let useEchoInstead: boolean = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? !configurations.useEchoInstead.useEchoInstead : configurations.useEchoInstead.useEchoInstead;
-    const printWithCallStack: boolean = (args === `printWithCallStack` || args === 'printCurrentOutputBufferWithCallStack') ? !configurations.printWithCallStack.printWithCallStack : configurations.printWithCallStack.printWithCallStack;
-    let varDumpExportVariable: boolean = (args === `varDumpExportVariable` || args === 'printCurrentOutputBufferVarDumpExport') ? !configurations.varDumpExportVariable.varDumpExportVariable : configurations.varDumpExportVariable.varDumpExportVariable;
-    const dumpOrExport: string = configurations.varDumpExportVariable.dumpOrExport;
-    const preOrBr: string = configurations.useEchoInstead.preOrBr;
+    const useEchoInstead: boolean = (args === `useEchoInstead` || args === 'printCurrentOutputBufferUseEcho') ? true : false;
+    const printWithCallStack: string = configurations.printWithCallStack;
+    const varDumpExportVariable: string = configurations.varDumpExportVariable;
+    const newLinesForEcho: string = configurations.newLinesForEcho;
 
-    if (args === `varDumpExportVariableAlternative` || args === 'printCurrentOutputBufferVarDumpExportAlternative') {
-        varDumpExportVariable = true;
-        useEchoInstead = !useEchoInstead;
-    }
-
-    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho', 'printCurrentOutputBufferWithCallStack', 'printCurrentOutputBufferVarDumpExport', 'printCurrentOutputBufferVarDumpExportAlternative'];
+    const printCurrentOutputBufferArray = ["printCurrentOutputBuffer", 'printCurrentOutputBufferUseEcho'];
     const printCurrentOutputBuffer = printCurrentOutputBufferArray.includes(args);
     const usePHPParserForPositioning: boolean = configurations.usePHPParserForPositioning;
     const laravelLog = configurations.laravelLog;
@@ -68,7 +50,7 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
         if (laravelLog.chooseLogLevel) {
 
             //Get logLevelsEnum from package.json file using require.
-            const logLevelsEnum: string[] = require('../package.json').contributes.configuration.properties['betterPhpErrorLogger.laravelLog'].properties.laravelLogLevel.enum;
+            const logLevelsEnum: string[] = packageJSON.contributes.configuration.properties['betterPhpErrorLogger.laravelLog'].properties.laravelLogLevel.enum;
 
             // OnDidChangeActive
             // const timeoutTime = 10000;
@@ -116,18 +98,18 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
         const errorLogs = configurations.errorLogs;
 
+
         const defaultVariableName: string = configurations.defaultVariable.name;
         const defaultVariableValue: string = configurations.defaultVariable.value;
-        const logOnlyFirstSelection = configurations.logOnlyFirstSelection;
-        const logMultipleAsArray = args === `logMultipleAsArray`;
+        const logMultiple: string = configurations.logMultiple;
 
-        let selections = logOnlyFirstSelection ? [editor.selection] : editor.selections;
+        let selections = logMultiple === 'Only first' ? [editor.selection] : editor.selections;
 
         let selectedVarString: string;
         let selectedVar: string;
         let position = 1;
 
-        if (logMultipleAsArray) {
+        if (logMultiple === 'As compact array') {
 
             // If no selection is made or all selections are empty, write info message and return.
             if (selections.length === 0 || selections.every(selection => document.getText(selection).trim().length === 0)) {
@@ -167,11 +149,17 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
             parantheseLeft = ` `;
             parantheseRight = ``;
 
-            if (preOrBr === `br`) {
-                newLine = ` . "<br>"`;
-            } else {
-                beforeEchos = `echo "<pre>";\n`;
-                afterEchos = `echo "</pre>";\n`;
+            switch (newLinesForEcho) {
+                case `br`:
+                    newLine = ` . "<br>"`;
+                    break;
+                case `PHP_EOL`:
+                    newLine = ` . PHP_EOL`;
+                    break;
+                case `pre`:
+                    beforeEchos = `echo '<pre>';\n`;
+                    afterEchos = `echo '</pre>';\n`;
+                    break;
             }
         }
 
@@ -181,7 +169,7 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
         let print_r_start = `print_r(`;
         let print_r_end = `, true)`;
 
-        if (!configurations.printWithCallStack.printCallStackAsArray) {
+        if (printWithCallStack !== 'With call stack as array') {
             getTrace += `AsString`;
             print_r_start = ``;
             print_r_end = ``;
@@ -190,7 +178,7 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
         selections.forEach(selection => {
 
-            if (!printCurrentOutputBuffer && !logMultipleAsArray) {
+            if (!printCurrentOutputBuffer && logMultiple !== 'As compact array') {
                 selectedVar = document.getText(selection);
                 selectedVarString = selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``);
             }
@@ -241,8 +229,9 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
 
             // let varDumpExportString = `\${"${selectedVar.replaceAll(`'`, ``).replaceAll(`"`, ``).replaceAll(`$`, `💲`)}"}`;
 
+            const dumpOrExport = varDumpExportVariable;
+            if (varDumpExportVariable !== 'No var dump or export') {
 
-            if (varDumpExportVariable) {
                 let varDumpExportSelectedVar = `${dumpOrExport}(${selectedVar})`;
 
 
@@ -273,16 +262,18 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
                 }
             }
 
-            editBuilder.insert(
-                new vscode.Position(selectedLine + position, 0), `${indentation}${beforeEchos}`
-            );
+            if (beforeEchos) {
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + position, 0), `${indentation}${beforeEchos}`
+                );
+            }
 
             errorLogs.forEach((errorLog: string): void => {
                 //selectedVar = selectedVar.replaceAll('$$', '\$$$$$');
 
                 errorLog = errorLog.replaceAll("${selectedVarString}", selectedVarString).replaceAll("${selectedVar}", selectedVar);
 
-                if (varDumpExportVariable && useEchoInstead) {
+                if (varDumpExportVariable !== "No var dump or export" && useEchoInstead) {
 
                     //Get index of all selecedVAr
                     let selectedVarIndexes = [];
@@ -310,18 +301,20 @@ export async function runTheFunctionBasedOnShortcut(args: string) {
                 );
             });
 
-            if (printWithCallStack) {
+            if (printWithCallStack === 'With call stack as string' || printWithCallStack === 'With call stack as array') {
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
                     `${indentation}${errorLogString}${parantheseLeft}${print_r_start} (new \\Exception()) -> ${getTrace}()${newLine}${print_r_end}${parantheseRight}; \n`
                 );
             }
 
-            editBuilder.insert(
-                new vscode.Position(selectedLine + position, 0), `${indentation}${afterEchos}`
-            );
+            if (afterEchos) {
+                editBuilder.insert(
+                    new vscode.Position(selectedLine + position, 0), `${indentation}${afterEchos}`
+                );
+            }
 
-            if (printCurrentOutputBuffer && varDumpExportVariable && dumpOrExport === 'var_dump') {
+            if (printCurrentOutputBuffer && varDumpExportVariable !== 'No var dump or export' && dumpOrExport === 'var_dump') {
                 editBuilder.insert(
                     new vscode.Position(selectedLine + position, 0),
                     `echo ${outbutbufferVariable}; \n`

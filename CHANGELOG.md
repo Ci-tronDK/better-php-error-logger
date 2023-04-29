@@ -2,6 +2,9 @@
 
 
 ## [Change Log]
+Version 0.1.38 29/4 2023 13.00 CEST
+- Made so it will now write a message when extension is updated. Changed the extension a bit, because some of the things were confusing, because it would do the opposite of the settings, like if user echoed and useEcho was set to false it would error_log. Made so user can change settings using shortcuts instead. Also fixed a bug where indentation were wrong. Updated README.md to reflect these changes.
+
 Version 0.1.34 16/4 2023 13.00 CEST
 - Made a new shortcut, which will log selected variables as an array using PHP's compact function. Added a very small change to delete error_logs and looked a little into regex. Updated README.md to reflect that I made a new shortcut.
 

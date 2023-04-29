@@ -13,22 +13,107 @@ import { runTheFunctionBasedOnShortcut } from './runTheFunctionBasedOnShortcut';
 /**
  * @param {vscode.ExtensionContext} context
  */
-function activate(context: { subscriptions: Disposable[]; }): void {
+function activate(context: vscode.ExtensionContext): void {
+
+    const packageJSON = context.extension.packageJSON;
+
+    //Get extension version
+    const betterPhpErrorLoggerVersion = packageJSON.version;
+
+    // Previous version
+    const previousBetterPhpErrorLoggerVersion = context.globalState.get("betterPhpErrorLoggerVersion");
+
+    // If previous version is undefined or not equal to current version, then update the version in global state and show message
+    if (previousBetterPhpErrorLoggerVersion === undefined || previousBetterPhpErrorLoggerVersion !== betterPhpErrorLoggerVersion) {
+        // Update the version in global state
+        context.globalState.update("betterPhpErrorLoggerVersion", betterPhpErrorLoggerVersion);
+
+        // Show message
+        vscode.window.showInformationMessage(`Better PHP Error Logger extension has been updated to version ${betterPhpErrorLoggerVersion}. I have changed how things work. Please read the README.md file.`);
+    }
 
     const allCommands: Disposable[] = [];
 
+    const toggleCommands = [
+        {
+            command: "logMultiple",
+            title: "Set this to Normal, As compact array or Only first",
+            options: [
+                "Normal",
+                "As compact array",
+                "Only first"
+            ]
+        },
+        {
+            command: "printWithCallStack",
+            title: "Print with call stack",
+            options: [
+                "No call stack",
+                "With call stack as string",
+                "With call stack as array"
+            ]
+        },
+        {
+            command: "varDumpExportVariable",
+            title: "Var dump or export variable",
+            options: [
+                "No var dump or export",
+                "var_dump",
+                "var_export"
+            ]
+        },
+        {
+            command: "newLinesForEcho",
+            title: "New lines for echo",
+            options: [
+                "none",
+                "pre",
+                "br",
+                "PHP_EOL"
+            ]
+        },
+    ];
+
+    toggleCommands.forEach((toggleCommand) => {
+
+        const toggleCommandDisposable: Disposable = vscode.commands.registerCommand(`extension.betterPhpErrorLogger.${toggleCommand.command}`, (): void => {
+
+            const configuration = vscode.workspace.getConfiguration("betterPhpErrorLogger");
+
+            //Get configuration
+            const configurationValue = configuration[toggleCommand.command];
+
+            //Get index of current value
+            const currentIndex = toggleCommand.options.indexOf(configurationValue);
+
+            //Get next index
+            let nextIndex = currentIndex + 1;
+
+            //If next index is out of range, then set it to 0
+            if (nextIndex >= toggleCommand.options.length) {
+                nextIndex = 0;
+            }
+
+            //Get next value
+            const nextValue = toggleCommand.options[nextIndex];
+
+            //Update configuration
+            configuration.update(toggleCommand.command, nextValue, true);
+
+            //Show message
+            vscode.window.showInformationMessage(`${toggleCommand.title} is now ${nextValue}.`);
+
+        });
+
+        allCommands.push(toggleCommandDisposable);
+
+    });
+
     const runTheFunctionBasedOnShortcutCommands = [
         "errorLog",
-        "printWithCallStack",
-        "varDumpExportVariable",
-        "varDumpExportVariableAlternative",
         "useEchoInstead",
         "printCurrentOutputBuffer",
-        "printCurrentOutputBufferWithCallStack",
-        "printCurrentOutputBufferVarDumpExport",
-        "printCurrentOutputBufferVarDumpExportAlternative",
         "printCurrentOutputBufferUseEcho",
-        "logMultipleAsArray"
     ];
 
     runTheFunctionBasedOnShortcutCommands.forEach((commandName: string) => {
@@ -38,7 +123,7 @@ function activate(context: { subscriptions: Disposable[]; }): void {
                 args = commandName;
             }
 
-            runTheFunctionBasedOnShortcut(args);
+            runTheFunctionBasedOnShortcut(args, packageJSON);
         });
 
         allCommands.push(command);
@@ -55,13 +140,13 @@ function activate(context: { subscriptions: Disposable[]; }): void {
 
         const items = [...runTheFunctionBasedOnShortcutCommands, "deleteErrorLogs"];
 
-        const packagejson = require('../package.json');
+
 
         //Get title of all commands
         const quickPickItems = items.map((commandName: string) => {
             return {
-                label: packagejson.contributes.commands.find((command: { command: string; title: string; }) => command.command === `extension.betterPhpErrorLogger.${commandName}`).title,
-                description: `Default shortcut: ${packagejson.contributes.keybindings.find((keybinding: { command: string; key: string; }) => keybinding.command === `extension.betterPhpErrorLogger.${commandName}`).key}`,
+                label: packageJSON.contributes.commands.find((command: { command: string; title: string; }) => command.command === `extension.betterPhpErrorLogger.${commandName}`).title,
+                description: `Default shortcut: ${packageJSON.contributes.keybindings.find((keybinding: { command: string; key: string; }) => keybinding.command === `extension.betterPhpErrorLogger.${commandName}`).key}`,
                 command: commandName
             };
         });
@@ -75,7 +160,7 @@ function activate(context: { subscriptions: Disposable[]; }): void {
 
         if (quickPickItem) {
             if (runTheFunctionBasedOnShortcutCommands.includes(quickPickItem.command)) {
-                runTheFunctionBasedOnShortcut(quickPickItem.command);
+                runTheFunctionBasedOnShortcut(quickPickItem.command, packageJSON);
             } else if (quickPickItem.command === "deleteErrorLogs") {
                 deleteError_logs();
             }

@@ -5,31 +5,30 @@ Download it [here](https://marketplace.visualstudio.com/items?itemName=martinvz.
 With this extension you can use the error_log function in PHP with keyboard shortcuts. There are some customization options.
 Here is a list of shortcuts you can use. 
 
-| Shortcuts 	     | Description                               	                                                               |  Why                                    |
-|------------------- |---------------------------------------------------------------------------------------------------------------- |---------------------------------------- |
-| `Ctrl + Alt + D`   | To to error log when a variable is selected. 	                                                               | D for Default. 	                 |
-| `Ctrl + Alt + C`   | To also print call stack. (No Call Stack, when it is true for default in settings)                              | C for Call Stack.                       | 
-| `Ctrl + Alt + V`   | To var_dump variable. (No Var dump, when it is true for default in settings)                                    | V for var_dump.                         |
-| `Ctrl + Alt + W`   | To var_dump variable. (Will always var_dump, but do the oppsite of useEcho in settings)                         | W also for var_dump. :)                 |
-| `Ctrl + Alt + E`   | To use Echo instead.  (No Use Echo instead, when it is true for default in settings)                            | E for Echo.                             |
-| `Ctrl + Alt + A`   | Log multiple variables as array using PHP's compact function. This will use the default settings. You can also use one of the other shortcuts to log multiple selections without using compact.                         | A for Array.                             |
-| `Ctrl + Alt + O D` | To print current output buffer with default settings.                                                           | O for Output buffer.                    |
-| `Ctrl + Alt + O C` | To print current output buffer with call stack. (No Call Stack, when it is true for default in settings)        |                                         | 
-| `Ctrl + Alt + O V` | To print current output buffer with var dumped variable. (No Var dump, when it is true for default in settings) |                                         |
-| `Ctrl + Alt + O W` | To print current output buffer with var dumped variable. (Will always var_dump, but do the oppsite of useEcho in settings) |                              |
-| `Ctrl + Alt + O E` | To echo current output buffer. (No Use Echo instead, when it is true for default in settings)                   |                                         |    
-| `Ctrl + Alt + X`   | To delete all error_logs and var_dumps inside a file.                   * Deletion may not work correctly.      | X for when something is crossed over :) |
-| `Ctrl + Alt + Q`   | If you can't remember all shortcuts, you can use this shortcut to quickpick one of the commands above.          | Q for quickpick.                        |
-
+| Shortcuts 	     | Description                               	                                                                          |  Why                                    |
+|------------------- |----------------------------------------------------------------------------------------------------------------        |---------------------------------------- |
+| **Output shoutcuts**                                                                                                                                                                  |
+| `Ctrl + Alt + D`   | To error log when a variable is selected. 	                                                                          | D for Default. 	                        |
+| `Ctrl + Alt + E`   | To echo when a variable is selected.                                                                                   | E for Echo.                             |
+| `Ctrl + Alt + O`   | To error_log current output buffer with the selected settings.                                                         | O for Output buffer.                    |
+| `Ctrl + Alt + P`   | To echo current output buffer with the selected settings.                                                              | P for print output buffer. :)           |
+| **Settings shortcuts**                                                                                                                                                                |
+| `Ctrl + Alt + C`   | To toggle between "No call stack", "With call stack as string" or "With call stack as array".                          | C for Call Stack.                       | 
+| `Ctrl + Alt + V`   | To toggle between  "No var dump or export", "var_dump" or "var_export".                                                | V for var_dump.                         |
+| `Ctrl + Alt + W`   | To toggle between "none", "pre", "br" or "PHP_EOL" when echoing.                                                       | W for writing new lines :)              |
+| `Ctrl + Alt + A`   | To toggle between "Normal", "As compact array" or "Only first"                                                         | A for Array.                            |
+| **Other shortcuts**                                                                                                                                                                   |
+| `Ctrl + Alt + X`   | To delete all error_logs and var_dumps inside a file.                   * Deletion may not work correctly.             | X for when something is crossed over :) |
+| `Ctrl + Alt + Q`   | If you can't remember output and other shortcuts, you can use this shortcut to quickpick one of the commands above.| Q for quickpick.                        |
 
 
 * Note: Sometimes I change how things work in settings, so the extension may not work correctly. But if you delete the settings for the extension it should work again. You can than read the readme for the new way to do the same.
 
 You can change the keyboard shortcuts in VS Code shortcut settings. 
 
-If you can't remember all the shortcuts, you can use the shortcut `Ctrl + Alt + Q` to quickpick one of the commands above.
+If you can't remember the output and other shortcuts, you can use the shortcut `Ctrl + Alt + Q` to quickpick one of the shortcuts above.
 
-In VS Code settings or `settings.json`, you can change some settings.
+In VS Code settings or `settings.json`, you can change some settings. The settings that can be changed by shortcut can only be changed in the user settings, not in the workspace settings.
 
 The default values for all the settings for the extension are:
 
@@ -42,18 +41,7 @@ The default values for all the settings for the extension are:
     "name": "here",  
     "value": "__CLASS__ . '::' . __FUNCTION__"  
 },
-"betterPhpErrorLogger.printWithCallStack": {
-    "printWithCallStack": false,
-    "printCallStackAsArray": false
-},
-"betterPhpErrorLogger.varDumpExportVariable": {
-    "varDumpExportVariable": false,
-    "dumpOrExport": "var_export"
-},
-"betterPhpErrorLogger.useEchoInstead": {
-    "useEchoInstead": false,
-    "preOrBr": "pre"
-},               
+              
 "betterPhpErrorLogger.usePHPParserForPositioning": true,
 "betterPhpErrorLogger.laravelLog": {
     "useLaravelLog": false,
@@ -61,8 +49,10 @@ The default values for all the settings for the extension are:
     "laravelLogLevel": "debug",
     "chooseLogLevel": false
 },
-"betterPhpErrorLogger.logOnlyFirstSelection": false
-
+"betterPhpErrorLogger.printWithCallStack": "No call stack",
+"betterPhpErrorLogger.logMultiple": "Normal",
+"betterPhpErrorLogger.newLinesForEcho": "pre",
+"betterPhpErrorLogger.varDumpExportVariable": "No var dump or export"
 ```
 
 To change what will be error logged you can set `betterPhpErrorLogger.errorLogs` to an array of strings, where each value string will be error logged.  
@@ -73,17 +63,14 @@ The exception is when var_dumping variable:
 
 You can use a default name when no variable is selected, change `betterPhpErrorLogger.defaultVariable` to do that. `${selectedVarString}` will be changed to the name and `${selectedVar}` will be the value.
 
-You can change some settings to always use them when using the default shortcut `Ctrl + Alt + D`.
-
-Set `betterPhpErrorLogger.printWithCallStack` to an object with the property printWithCallStack set to true to also print call stack. You can also choose to print the call stack as an array, if you set the property printCallStackAsArray as array to true.  
-Set `betterPhpErrorLogger.useEchoInstead` to an object with the property useEchoInstead set to true to use echo instead of error_log. You can also choose between using pre or br tags, by setting the property preOrBr to pre or br.
-Set `betterPhpErrorLogger.varDumpExportVariable` to an object with the property varDumpExportVariable set to true to var_dump or export the variable. Set the property dumpOrExport to var_dump or var_export to choose what to use.
-
-If you have any of these settings set to true for the default shortcut, it will do the opposite when you use the shortcut for them, like it says in the description for the shortcuts above.
-For the other settings things it will use your defaults.
-  
-By default the extension uses PHP Parser to try to position the error_log correctly. PHP Parser requires valid code. If you have problems with this you can set `betterPhpErrorLogger.usePHPParserForPositioning` to false. This will always log on the next line.
-
 If you want to use Laravel's log function instead of error_log, you can set `betterPhpErrorLogger.laravelLog` to an object with the property useLaravelLog set to true. autoUse is a setting that will write `use Illuminate\Support\Facades\Log;` after the last use statement, if it doesn't exist. The default is true. You can also set the log level with the property laravelLogLevel. The default log level is debug. You can also choose to choose the log level when logging, by setting the property chooseLogLevel to true.
 
-Now when you have selected multiple things, all will be logged. If you want to log only the first selection you can set `betterPhpErrorLogger.logOnlyFirstSelection` to true.
+By default the extension uses PHP Parser to try to position the error_log correctly. PHP Parser requires valid code. If you have problems with this you can set `betterPhpErrorLogger.usePHPParserForPositioning` to false. This will always log on the next line.
+
+Set `betterPhpErrorLogger.printWithCallStack` to a string with one of these values: "No call stack", "With call stack as string" or "With call stack as array" to change if you want to print the call stack.
+
+Set `betterPhpErrorLogger.logMultiple` to a string with one of these values: "Normal", "As compact array" or "Only first" to change if you want to log multiple variables or not. and how you want to log them.
+
+Set `betterPhpErrorLogger.newLinesForEcho` to a string with one of these values: "none", "pre", "br" or "PHP_EOL" to change how new lines are written when echoing. If pre is chosen, the echo statement will be wrapped in pre tags.
+
+Set `betterPhpErrorLogger.varDumpExportVariable` to a string with one of these values: "No var dump or export", "var_dump" or "var_export" to change if you want to var_dump or var_export the variable or not.
