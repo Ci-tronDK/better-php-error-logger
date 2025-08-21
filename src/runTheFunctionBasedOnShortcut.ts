@@ -202,6 +202,9 @@ export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: a
 
                     //Find first occurence of ; after an assigned variable.
                     'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
+
+                    //Log before the return statement when variable is in return.
+                    'return': selectedLine - 1,
                 }
 
                 selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
