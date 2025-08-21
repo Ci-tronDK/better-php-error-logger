@@ -42,7 +42,7 @@ export const getSelectionType = (selection: Selection, selectedVarName: string, 
                 }
             }
         } else if (child.kind === `return`) {
-            if (child.expr && correctPosition(child.expr.loc.start.line, child.expr.loc.start.column, child.expr.loc.end.line, child.expr.loc.end.column)) {
+            if (child.expr && child.expr.loc && correctPosition(child.expr.loc.start.line, child.expr.loc.start.column, child.expr.loc.end.line, child.expr.loc.end.column)) {
                 selectionType = `return`;
             }
         }

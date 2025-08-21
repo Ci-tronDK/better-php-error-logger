@@ -217,7 +217,7 @@ export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: a
                     
                     // Use backward positioning for return statements and forward for others
                     if (currentLineText.includes('return ')) {
-                        selectedLine = findBackwardStatementPosition(document, selectedLine);
+                        selectedLine = Math.max(0, selectedLine - 1);
                     } else {
                         selectedLine = findStatementPosition(document, selectedLine, selectedLine);
                     }

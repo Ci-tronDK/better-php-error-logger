@@ -13,6 +13,11 @@ export function findStatementPosition(document: TextDocument, startLine: number,
         const lineText = document.lineAt(i).text.trim();
         const originalLineText = document.lineAt(i).text;
         
+        // If we encounter a return statement on this line or a later line, place log before it
+        if (lineText.includes('return ') && i >= selectedVarLine) {
+            return Math.max(0, i - 1);
+        }
+        
         // If we find a semicolon at the end of the line, place log after this line
         if (lineText.endsWith(';')) {
             return i;
@@ -21,11 +26,6 @@ export function findStatementPosition(document: TextDocument, startLine: number,
         // If we find a closing brace that ends a statement/block
         if (lineText.endsWith('}') || lineText === '}') {
             return i;
-        }
-        
-        // If we encounter a return statement on this line or a later line, place log before it
-        if (lineText.includes('return ') && i > selectedVarLine) {
-            return i - 1;
         }
         
         // If we encounter a new statement starting (like if, for, while, etc.), place log before it
