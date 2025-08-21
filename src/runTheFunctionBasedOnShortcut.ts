@@ -5,6 +5,8 @@ import { getIndentation } from "./getIndentation";
 import { isBalanced } from "./isBalanced";
 import { getSelectionType } from './getSelectionType';
 import { parsePHPfile } from './parsePHPfile';
+import { findStatementPosition } from './findStatementPosition';
+import { findBackwardStatementPosition } from './findBackwardStatementPosition';
 import { Program } from 'php-parser';
 
 export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: any): Promise<void> {
@@ -202,9 +204,24 @@ export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: a
 
                     //Find first occurence of ; after an assigned variable.
                     'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
+
+                    //For return statements, place log before the return statement.
+                    'return': Math.max(0, selectedLine - 1),
                 }
 
                 selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
+                
+                // If no specific type was detected, use smart positioning
+                if (!selectionType) {
+                    const currentLineText = document.lineAt(selectedLine).text.trim();
+                    
+                    // Use backward positioning for return statements and forward for others
+                    if (currentLineText.includes('return ')) {
+                        selectedLine = findBackwardStatementPosition(document, selectedLine);
+                    } else {
+                        selectedLine = findStatementPosition(document, selectedLine, selectedLine);
+                    }
+                }
             }
 
             const indentation = getIndentation(editor, document, selectedLine);
