@@ -204,7 +204,7 @@ export async function runTheFunctionBasedOnShortcut(args: string, packageJSON: a
                     'assigned_variable': symbolFinderLoop(document, selectedLine, ';'),
 
                     //Log before the return statement when variable is in return.
-                    'return': selectedLine - 1,
+                    'return': Math.max(0, selectedLine - 1),
                 }
 
                 selectedLine = selectionTypeToSelectedLine[selectionType] || selectedLine;
