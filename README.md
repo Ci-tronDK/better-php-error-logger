@@ -74,3 +74,14 @@ Set `betterPhpErrorLogger.logMultiple` to a string with one of these values: "No
 Set `betterPhpErrorLogger.newLinesForEcho` to a string with one of these values: "none", "pre", "br" or "PHP_EOL" to change how new lines are written when echoing. If pre is chosen, the echo statement will be wrapped in pre tags.
 
 Set `betterPhpErrorLogger.varDumpExportVariable` to a string with one of these values: "No var dump or export", "var_dump" or "var_export" to change if you want to var_dump or var_export the variable or not.
+
+## Intelligent Log Positioning
+
+The extension now includes improved positioning logic for error log statements:
+
+- **Return statements**: When logging variables in return statements, the log is placed before the return statement instead of after it
+- **Statement endings**: Logs are positioned after statement closures (semicolons, closing braces)
+- **Control structures**: Logs are placed before control structures (if, for, while, etc.) when appropriate
+- **Mixed PHP/HTML**: In files with mixed PHP and HTML, logs are positioned before HTML content when possible
+
+The extension uses PHP Parser when enabled (`betterPhpErrorLogger.usePHPParserForPositioning`) to understand code structure and provide optimal positioning. When disabled or when the parser cannot analyze the code, it falls back to intelligent text-based positioning.

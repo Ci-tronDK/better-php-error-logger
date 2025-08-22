@@ -41,11 +41,11 @@ export const getSelectionType = (selection: Selection, selectedVarName: string, 
                     selectionType = `assigned_variable`;
                 }
             }
+        } else if (child.kind === `return`) {
+            if (child.expr && child.expr.loc && correctPosition(child.expr.loc.start.line, child.expr.loc.start.column, child.expr.loc.end.line, child.expr.loc.end.column)) {
+                selectionType = `return`;
+            }
         }
-        // else if (child.kind === `return`) {
-        //     if (correctPosition(child.expr.loc.start.line, child.expr.loc.start.column, child.expr.loc.end.line, child.expr.loc.end.column)) {
-        //         selectionType = `return`;
-        //     }
         // } else if (child.kind === `foreach`) {
         //     if (correctPosition(child.source.loc.start.line, child.source.loc.start.column, child.source.loc.end.line, child.source.loc.end.column)
         //         || correctPosition(child.key.loc.start.line, child.key.loc.start.column, child.key.loc.end.line, child.key.loc.end.column)
